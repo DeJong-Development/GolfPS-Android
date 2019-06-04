@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">GolfPS</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="next"><![CDATA[Next ↣]]></string>
+    <string name="prev"><![CDATA[↢ Prev]]></string>
+</resources>

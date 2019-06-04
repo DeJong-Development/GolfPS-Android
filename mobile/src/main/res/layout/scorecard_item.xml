@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:alpha="50"
+    android:descendantFocusability="blocksDescendants"
+    android:padding="2dp" >
+
+    <TextView
+        android:id="@+id/holeNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="Hole # 1"/>
+
+    <TextView
+        android:id="@+id/strokes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_marginLeft="38dp"
+        android:layout_marginStart="38dp"
+        android:layout_toEndOf="@+id/holeNumber"
+        android:layout_toRightOf="@+id/holeNumber"
+        android:text="8"/>
+</RelativeLayout>

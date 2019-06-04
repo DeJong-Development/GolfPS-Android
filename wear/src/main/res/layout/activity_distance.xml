@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.wearable.view.BoxInsetLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.flummoxedcosmos.golface.DistanceActivity"
+    tools:deviceIds="wear">
+
+    <TextView
+        android:id="@+id/distanceText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="-"
+        android:textColor="#FFFFFF"
+        android:textSize="45sp"
+        app:layout_box="all"/>
+
+    <Button
+        android:id="@+id/swingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Swing"/>
+
+    <TextView
+        android:id="@+id/holeNumberText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="#1"/>
+
+    <TextView
+        android:id="@+id/strokeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_margin="5dp"
+        android:text="-"/>
+
+    <TextView
+        android:id="@+id/clock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:textColor="@android:color/white"
+        app:layout_box="all"/>
+
+    <TextView
+        android:id="@+id/unitText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:layout_margin="5dp"
+        android:text="yards"/>
+
+    <Button
+        android:id="@+id/holeOutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:text="Hole-Out"/>
+
+</android.support.wearable.view.BoxInsetLayout>

@@ -1,0 +1,131 @@
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/map_holder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000">
+
+        <!--<fragment-->
+            <!--xmlns:map="http://schemas.android.com/apk/res-auto"-->
+            <!--android:id="@+id/map"-->
+            <!--android:name="com.google.android.gms.maps.SupportMapFragment"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+
+            <!--android:layout_above="@+id/nextButton"-->
+            <!--tools:context="com.flummoxedcosmos.golface.activities.MapsActivity"/>-->
+
+        <!-- As the main content view, the view below consumes the entire
+         space available using match_parent in both dimensions. -->
+
+        <FrameLayout
+            android:id="@+id/content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/previousButton"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true">
+
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/previousButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:text="@string/prev"/>
+
+        <ToggleButton
+            android:id="@+id/alignHoleButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="50dp"
+            android:checked="true"
+            android:text="Align"
+            android:textOff="Off"
+            android:textOn="On"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/courseName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="19dp"
+            android:background="@drawable/rounded_corner"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="5dp"
+            android:text="Course Name"
+            android:textColor="#FFFFFF"/>
+
+        <TextView
+            android:id="@+id/distanceToPin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/suggestedClub"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="0dp"
+            android:shadowColor="#000000"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:text="- yds"
+            android:textColor="@color/white"
+            android:textSize="45sp"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/nextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:text="@string/next"/>
+
+        <TextView
+            android:id="@+id/suggestedClub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/nextButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:shadowColor="#000000"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:text="-"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/holeNumberButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="Hole #1"/>
+
+
+    </RelativeLayout>
+
+    <!-- The navigation drawer -->
+    <ListView android:id="@+id/left_drawer"
+              android:layout_width="240dp"
+              android:layout_height="match_parent"
+              android:layout_gravity="start"
+              android:background="#111"
+              android:choiceMode="singleChoice"
+              android:divider="@android:color/transparent"
+              android:dividerHeight="0dp"/>
+</android.support.v4.widget.DrawerLayout>

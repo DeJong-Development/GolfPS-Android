@@ -1,0 +1,17 @@
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+
+golf-ace-backend/build
+.idea
+mobile/src/debug/res/values/google_maps_api.xml
+mobile/release/mobile-release.apk
+*.apk
+mobile/src/release/res/values/google_maps_api.xml
+mobile/google-services.json
