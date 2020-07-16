@@ -3,9 +3,8 @@ package com.dejongdevelopment.golfps.activities;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
-import com.dejongdevelopment.golfps.activities.StartActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by gdejong on 5/8/17.

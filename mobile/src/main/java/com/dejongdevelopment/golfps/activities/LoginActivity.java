@@ -2,10 +2,11 @@ package com.dejongdevelopment.golfps.activities;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
 import com.dejongdevelopment.golfps.R;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginActivity extends AppCompatActivity {
 

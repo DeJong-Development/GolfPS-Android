@@ -19,15 +19,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,9 +32,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.dejongdevelopment.golfps.activities.fragments.MyClubsFragment;
 import com.dejongdevelopment.golfps.R;
-import com.dejongdevelopment.golfps.pickers.MarkerClick;
+import com.dejongdevelopment.golfps.activities.fragments.MyClubsFragment;
 import com.dejongdevelopment.golfps.models.Course;
 import com.dejongdevelopment.golfps.models.Hole;
 import com.dejongdevelopment.golfps.navigation.NavDrawerAdapter;
@@ -64,7 +54,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -101,6 +90,16 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 
 public class MapsActivity extends FragmentActivity implements
@@ -284,7 +283,7 @@ public class MapsActivity extends FragmentActivity implements
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = new SupportMapFragment();
         // Insert the fragment by replacing any existing fragment
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, mapFragment)
                 .commit();
@@ -1259,5 +1258,4 @@ public class MapsActivity extends FragmentActivity implements
             finish(); //go back to start activity
         }
     }
-
 }

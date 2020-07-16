@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +15,8 @@ import android.widget.TextView;
 import com.dejongdevelopment.golfps.R;
 import com.dejongdevelopment.golfps.activities.MapsActivity;
 import com.dejongdevelopment.golfps.pickers.DistancePicker;
+
+import androidx.fragment.app.Fragment;
 
 /**
  * Created by gdejong on 6/21/17.
@@ -199,7 +200,6 @@ public class MyClubsFragment extends Fragment {
                     case 13: club13Button.setText(dYd); break;
                 }
             }
-
         }
     }
 }
