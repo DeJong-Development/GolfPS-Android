@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorText">#ffffff</color>
+    <color name="colorTextLite">#33ffffff</color>
+
+    <color name="background1">#222222</color>
+    <color name="background2">#1A1A1A</color>
+    <color name="background3">#111111</color>
+    <color name="background4">#000000</color>
+</resources>
