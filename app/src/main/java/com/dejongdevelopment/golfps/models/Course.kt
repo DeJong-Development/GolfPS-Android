@@ -206,22 +206,18 @@ class Course(val id: String): Parcelable {
         this.holes.clear()
 
         courseDocRef.collection("holes").get()
-            .addOnCompleteListener { task ->
+            .addOnSuccessListener {  querySnapshot ->
+                for (document in querySnapshot.documents) {
+                    val data = document.data ?: continue
+                    val holeNumber = document.id.toIntOrNull() ?: continue
 
-                if (task.isSuccessful) {
-                    val querySnapshot = task.result
-                    for (document in querySnapshot.documents) {
-                        val data = document.data ?: continue
-                        val holeNumber = document.id.toIntOrNull() ?: continue
-
-                        val hole = Hole(holeNumber, data)
-                        this.holes.add(hole)
-                    }
-                    completion(true, null)
-                    return@addOnCompleteListener
+                    val hole = Hole(holeNumber, data)
+                    this.holes.add(hole)
                 }
-
-                completion(false, task.exception)
+                completion(true, null)
+            }
+            .addOnFailureListener {
+                completion(false, it)
             }
     }
 

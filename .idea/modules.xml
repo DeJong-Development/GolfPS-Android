@@ -4,6 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/GolfPS.iml" filepath="$PROJECT_DIR$/.idea/modules/GolfPS.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/GolfPS.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/GolfPS.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/GolfPS.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/GolfPS.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/GolfPS.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/GolfPS.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/GolfPS.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/GolfPS.app.unitTest.iml" />
     </modules>
   </component>
 </project>

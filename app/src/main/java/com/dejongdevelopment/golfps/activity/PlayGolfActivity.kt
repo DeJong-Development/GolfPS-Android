@@ -120,6 +120,8 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
                 if (this.mapReady) {
                     goToHole()
                 }
+            } else {
+                Log.d("HOLES", "No success in getting holes")
             }
         }
     }
@@ -647,7 +649,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
         }
 
         for (i in 0..2) {
-            val drivingClub = Club(i + 1)
+            val drivingClub = Club(i + driver.number)
             Log.d("LINES", "club distance: ${drivingClub.name} - ${drivingClub.distance}")
             @ColorInt val lineColor:Int = drivingDistanceLineColors[i]
 

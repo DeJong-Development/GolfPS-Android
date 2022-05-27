@@ -74,6 +74,7 @@ class AddCourseActivity : FragmentActivity() {
 
                         if (task.isSuccessful) {
                             Log.d("REQUEST COURSE", "Success!")
+                            Toast.makeText(this@AddCourseActivity, "Course successfully requested! Check back in a few days!", Toast.LENGTH_LONG).show()
                             this@AddCourseActivity.finish()
                         } else {
                             Log.d("REQUEST COURSE", "Error writing course request")

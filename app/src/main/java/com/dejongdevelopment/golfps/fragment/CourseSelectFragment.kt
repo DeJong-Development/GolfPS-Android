@@ -33,7 +33,7 @@ class CourseSelectFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentCourseSelectBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -45,6 +45,8 @@ class CourseSelectFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.loadingCoursesBar.visibility = View.INVISIBLE
 
         getCourses()
 
@@ -76,10 +78,14 @@ class CourseSelectFragment: Fragment() {
     private fun getCourses() {
         val golfCourses:MutableList<Course> = mutableListOf()
 
+        binding.loadingCoursesBar.visibility = View.VISIBLE
+
         Firebase.firestore.collection("courses")
             .orderBy("name")
             .get()
             .addOnCompleteListener { task ->
+                binding.loadingCoursesBar.visibility = View.INVISIBLE
+
                 if (task.isSuccessful) {
                     val snapshot = task.result
                     for (document in snapshot.documents) {
