@@ -74,8 +74,24 @@ object MapTools {
         val lngZoom: Float = zoom(viewWidth / scaleX / 2, 256.0, lngFraction)
 
         //can this be adjusted to account for bearing as well?
-        //don't zoom in too far unti lwe account for bearing
+        //don't zoom in too far until we account for bearing
         return min(min(latZoom, lngZoom), 19f)
+    }
+
+    fun getCircularZoom(holeLength: Double, holeWidth: Double, view: View): Float {
+        fun zoom(mapPx:Double, worldPx:Double, fraction:Double): Float {
+            return (log(mapPx / worldPx / fraction, 10.0) / log(2.0, 10.0)).toFloat()
+        }
+
+        val viewHeight = view.measuredHeight.toDouble()
+        val scaleY = view.scaleY.toDouble()
+        val viewWidth = view.measuredWidth.toDouble()
+        val scaleX = view.scaleX.toDouble()
+
+        val verticalZoom: Float = zoom(viewHeight / scaleY / 3, 256.0, holeLength / 30000000)
+        val horizontalZoom: Float = zoom(viewWidth / scaleX / 3, 256.0, holeWidth / 30000000)
+
+        return min(min(verticalZoom, horizontalZoom), 19f)
     }
 
     fun coordinates(startingCoordinates: LatLng, atDistance: Double, atAngle: Double): LatLng {

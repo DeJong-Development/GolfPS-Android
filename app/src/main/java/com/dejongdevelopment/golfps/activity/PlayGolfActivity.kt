@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.ColorInt
 import androidx.core.app.ActivityCompat
+import androidx.core.view.size
 import androidx.fragment.app.FragmentActivity
 import com.dejongdevelopment.golfps.BuildConfig
 import com.dejongdevelopment.golfps.GolfApplication
@@ -544,11 +545,13 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
         val teeLocation: GeoPoint = currentHole?.teeLocations?.firstOrNull() ?: return
         val pinLocation: GeoPoint = currentHole?.pinLocation ?: return
         val bearing = MapTools.calculateBearing(teeLocation, pinLocation) - 20f
+        val distance = MapTools.distanceFrom(teeLocation, pinLocation)
 
-        val zoom: Float = MapTools.getBoundsZoomLevel(bounds, this.binding.contentFrame)
+        val zoom1: Float = MapTools.getBoundsZoomLevel(bounds, this.binding.contentFrame)
+        val zoom2: Float = MapTools.getCircularZoom(distance.toDouble(), 100.0, this.binding.contentFrame)
         val center: LatLng = MapTools.getBoundsCenter(bounds)
 
-        val camera = CameraPosition(center, zoom, 45f, bearing)
+        val camera = CameraPosition(center, zoom2, 45f, bearing)
         val update = CameraUpdateFactory.newCameraPosition(camera)
         this.map.animateCamera(update)
     }
