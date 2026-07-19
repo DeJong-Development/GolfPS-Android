@@ -1,6 +1,5 @@
 package com.dejongdevelopment.golfps.util
 
-import android.location.Location
 import android.util.Log
 import android.util.Size
 import android.view.View

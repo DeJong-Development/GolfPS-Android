@@ -5,26 +5,14 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.2.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21"
+        classpath 'com.android.tools.build:gradle:8.13.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.0"
 
-        classpath 'com.google.gms:google-services:4.3.10'
-        classpath 'com.google.firebase:perf-plugin:1.4.1'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.0'
+        classpath 'com.google.gms:google-services:4.4.2'
+        classpath 'com.google.firebase:perf-plugin:1.4.2'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.2'
     }
 }
-
-//allprojects {
-//    repositories {
-//
-//        maven {
-//            url "https://storage.googleapis.com/snap-kit-build/maven"
-//        }
-//
-//        mavenCentral()
-//        google()  // Google's Maven repository
-//    }
-//}
 
 task clean(type: Delete) {
     delete rootProject.buildDir
