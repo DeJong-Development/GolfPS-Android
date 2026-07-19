@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="accent">#007A00</color>
+    <color name="grass">#007A00</color>
+    <color name="text">#000000</color>
+    <color name="background">#FFFFFF</color>
+    <color name="gold">#C3A767</color>
+
     <color name="colorPrimary">#007A00</color>
 
     <color name="colorText">#000000</color>
@@ -19,7 +25,6 @@
     <color name="light3">#DFDFDF</color>
     <color name="light4">#CFCFCF</color>
 
-    <color name="gold">#AC9C63</color>
     <color name="silver">#B9B9B9</color>
     <color name="bronze">#A87F66</color>
 

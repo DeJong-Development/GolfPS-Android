@@ -19,7 +19,7 @@ import com.dejongdevelopment.golfps.BuildConfig
 import com.dejongdevelopment.golfps.GolfApplication
 import com.dejongdevelopment.golfps.databinding.ActivityPlayGolfBinding
 import com.dejongdevelopment.golfps.models.Hole
-import com.dejongdevelopment.golfps.util.MapTools
+import com.dejongdevelopment.golfps.tools.MapTools
 import com.dejongdevelopment.golfps.util.latLng
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
@@ -150,7 +150,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
-                val location = locationResult.lastLocation
+                val location = locationResult.lastLocation ?: return
 
                 GolfApplication.me.geoPoint = location.geopoint
                 updatePlayerMarker()
@@ -501,7 +501,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
         //update yardage
         val distance = distanceToMeFromPin ?: currentHole?.distanceToPinFromTee ?: return
         binding.distanceToPin.text = distance.distance
-        binding.suggestedClub.text = GolfApplication.me.bag.getClubSuggestion(distance).name
+        binding.suggestedClub.text = GolfApplication.me.bag.getClubSuggestion(distance)?.name ?: "-"
     }
 
     private val distanceToMeFromTee:Int?
@@ -621,7 +621,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
             return
         }
 
-        val suggestedClub:Club = GolfApplication.me.bag.getClubSuggestion(distancePinMe)
+        val suggestedClub:Club = GolfApplication.me.bag.getClubSuggestion(distancePinMe) ?: return
 
         val meIsCloseToPin:Boolean = distancePinMe < (distancePinTee - 30)
         val meIsCloseToSelectedHole:Boolean = (distanceTeeMe + distancePinMe) < (distancePinTee + 75)
@@ -646,13 +646,13 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
 
         val teeYardsToPin:Int = currentHole?.distanceToPinFromTee ?: return
 
-        val driver = Club(1)
+        val driver = GolfApplication.me.bag.myClubs.firstOrNull() ?: return
         if (driver.distance > teeYardsToPin) {
             return
         }
 
-        for (i in 0..2) {
-            val drivingClub = Club(i + driver.number)
+        val drivingClubs = GolfApplication.me.bag.myClubs.take(3)
+        for ((i, drivingClub) in drivingClubs.withIndex()) {
             Log.d("LINES", "club distance: ${drivingClub.name} - ${drivingClub.distance}")
             @ColorInt val lineColor:Int = drivingDistanceLineColors[i]
 
@@ -696,14 +696,19 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
             return
         }
 
+        val suggestedClubIndex = GolfApplication.me.bag.myClubs.indexOfFirst { it.id == suggestedClub.id }
+        if (suggestedClubIndex == -1) {
+            return
+        }
+
         //show up to 2 club ups - if suggesting driver then 0 change allowed
-        val clubUps:Int = -min(suggestedClub.number - 1, 2)
+        val clubUps:Int = -min(suggestedClubIndex, 2)
 
         //show up to 2 club downs but not past smallest club
-        val clubDowns:Int = min(GolfApplication.me.bag.myClubs.size - suggestedClub.number, 2) + 1
+        val clubDowns:Int = min(GolfApplication.me.bag.myClubs.lastIndex - suggestedClubIndex, 2)
 
         for (i in clubUps..clubDowns) {
-            val clubSelectionToShow:Club = Club(suggestedClub.number + i)
+            val clubSelectionToShow:Club = GolfApplication.me.bag.myClubs[suggestedClubIndex + i]
 
             @ColorInt val lineColor:Int = when (i) {
                 -1 -> Color.RED

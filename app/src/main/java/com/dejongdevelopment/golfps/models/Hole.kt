@@ -1,7 +1,7 @@
 package com.dejongdevelopment.golfps.models
 
 import com.dejongdevelopment.golfps.GolfApplication
-import com.dejongdevelopment.golfps.util.MapTools
+import com.dejongdevelopment.golfps.tools.MapTools
 import com.dejongdevelopment.golfps.util.latLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.firebase.firestore.DocumentReference

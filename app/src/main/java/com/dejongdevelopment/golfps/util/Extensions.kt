@@ -14,11 +14,14 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.dejongdevelopment.golfps.GolfApplication
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.firebase.firestore.GeoPoint
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.ln
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 fun Fragment.hideKeyboard() {
     view?.let { activity?.hideKeyboard(it) }
@@ -76,6 +79,30 @@ val Int.distance: String
             "$this yds"
         }
     }
+
+fun Int.toMeters(): Int = (this.toDouble() / 1.09361).toInt()
+
+fun Int.toYards(): Int = (this.toDouble() * 1.09361).toInt()
+
+val Double.distance: String
+    get() {
+        return if (GolfApplication.metric) {
+            "${this.toInt()} m"
+        } else {
+            "${this.toInt()} yds"
+        }
+    }
+
+fun Double.toMeters(): Double = this / 1.09361
+
+fun Double.toYards(): Double = this * 1.09361
+
+fun Double.gaussianRandom(stdDev: Double): Double {
+    val u = 1 - Math.random()
+    val v = Math.random()
+    val z = sqrt(-2 * ln(u)) * cos(2 * PI * v)
+    return z * stdDev + this
+}
 
 /** 00HR 00MIN 00SEC */
 val Int.verboseDuration: String
@@ -149,14 +176,22 @@ val String.alphanumeric: String
 
 //https://www.objc.io/blog/2020/08/18/fuzzy-search/
 fun String.fuzzyMatch(query: String): Boolean {
-    if (query.isEmpty()) { return true }
-    val remainder = query.toCharArray()
-    for (char in this) {
-        if (char == remainder[remainder.lastIndex]) {
-            remainder.drop(1)
-            if (remainder.isEmpty()) { return true }
+    if (query.isEmpty()) {
+        return true
+    }
+
+    val target = query.lowercase()
+    var targetIndex = 0
+
+    for (char in lowercase()) {
+        if (char == target[targetIndex]) {
+            targetIndex += 1
+            if (targetIndex == target.length) {
+                return true
+            }
         }
     }
+
     return false
 }
 

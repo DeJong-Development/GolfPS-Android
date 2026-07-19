@@ -20,6 +20,8 @@ open class Player(id: String) {
         private set
     var avatarURL: URL? = null
         private set
+    var ambassadorCourses: List<String> = listOf()
+        private set
 
     val docReference: DocumentReference?
         get() {
@@ -30,9 +32,10 @@ open class Player(id: String) {
     constructor(id: String, data:MutableMap<String,Any>) : this(id) {
         this.geoPoint = data["location"] as? GeoPoint
         this.lastLocationUpdate = (data["updateTime"] as? Timestamp)?.toDate()
+        this.ambassadorCourses = data["ambassadorCourses"] as? List<String> ?: listOf()
 
         val avatarPath = data["image"] as? String
-        avatarPath?.let {
+        avatarPath?.takeIf { it.isNotBlank() }?.let {
             this.avatarURL = URL(it)
         }
     }
@@ -41,7 +44,19 @@ open class Player(id: String) {
 class Me(id:String) : Player(id) {
     var numStrokes:Int = 0
 
-//    var badges:[Badge] = [Badge]()
+    val badges:List<Badge> = listOf(
+        LocalBadge("local"),
+        ExplorerBadge("explorer"),
+        RoadTripperBadge("roadtripper"),
+        LongDriveBadge("longdrive"),
+        CustomizerBadge("bagcustomize"),
+        BroadcasterBadge("broadcaster"),
+        BitmojiLiveBadge("bitmojilive"),
+        CartographerBadge("cartographer"),
+        AmbassadorBadge("ambassador"),
+        ActiveAmbassadorBadge("activeambassador")
+    )
+
     var bag:Bag = Bag()
         private set
 
@@ -52,10 +67,8 @@ class Me(id:String) : Player(id) {
         get() = GolfApplication.preferences?.getStringSet("player_courses_visited", null)
 
     fun addCourseVisitation(courseId:String) {
-        val cv = coursesVisited ?: return
-
         val newCoursesVisited:MutableSet<String> = mutableSetOf()
-        newCoursesVisited.addAll(cv)
+        coursesVisited?.let { newCoursesVisited.addAll(it) }
         newCoursesVisited.add(courseId)
         GolfApplication.preferences?.edit()?.let { editor ->
             editor.putStringSet("player_courses_visited", newCoursesVisited)
@@ -80,6 +93,24 @@ class Me(id:String) : Player(id) {
             }
         }
 
+    var didSeeAmbassadorMessage:Boolean
+        get() = GolfApplication.preferences?.getBoolean("player_saw_ambassador_message", false) ?: false
+        set(didSeeMessage) {
+            GolfApplication.preferences?.edit()?.let { editor ->
+                editor.putBoolean("player_saw_ambassador_message", didSeeMessage)
+                editor.apply()
+            }
+        }
+
+    var didModifyAmbassadorCourse:Boolean
+        get() = GolfApplication.preferences?.getBoolean("player_modified_course", false) ?: false
+        set(didModifyCourse) {
+            GolfApplication.preferences?.edit()?.let { editor ->
+                editor.putBoolean("player_modified_course", didModifyCourse)
+                editor.apply()
+            }
+        }
+
     var shareLocation:Boolean
         get() = GolfApplication.preferences?.getBoolean("player_share_location", false) ?: false
         set(newSharePreference) {
@@ -97,4 +128,8 @@ class Me(id:String) : Player(id) {
                 editor.apply()
             }
         }
+
+    fun isAmbassadorOf(course: Course): Boolean {
+        return ambassadorCourses.contains(course.id)
+    }
 }

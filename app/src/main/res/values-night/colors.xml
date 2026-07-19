@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="text">#ffffff</color>
+    <color name="background">#000000</color>
+
     <color name="colorText">#ffffff</color>
     <color name="colorTextLite">#33ffffff</color>
 

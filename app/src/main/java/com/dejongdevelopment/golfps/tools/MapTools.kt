@@ -1,9 +1,11 @@
-package com.dejongdevelopment.golfps.util
+package com.dejongdevelopment.golfps.tools
 
 import android.util.Log
 import android.util.Size
 import android.view.View
 import com.dejongdevelopment.golfps.GolfApplication
+import com.dejongdevelopment.golfps.util.geopoint
+import com.dejongdevelopment.golfps.util.location
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.firebase.firestore.GeoPoint

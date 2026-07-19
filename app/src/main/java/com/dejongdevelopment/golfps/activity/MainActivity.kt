@@ -10,7 +10,7 @@ import com.dejongdevelopment.golfps.GolfApplication
 import com.dejongdevelopment.golfps.databinding.ActivityMainBinding
 import com.dejongdevelopment.golfps.fragment.BagFragment
 import com.dejongdevelopment.golfps.fragment.CourseSelectFragment
-import com.dejongdevelopment.golfps.fragment.ProfileFragment
+import com.dejongdevelopment.golfps.fragment.SettingsFragment
 import com.dejongdevelopment.golfps.models.Me
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -67,7 +67,7 @@ class MainPageTabAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdap
         when (position) {
             0 -> return CourseSelectFragment()
             1 -> return BagFragment()
-            2 -> return ProfileFragment()
+            2 -> return SettingsFragment()
         }
         throw Error("invalid number of fragments in view pager")
     }

@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.dejongdevelopment.golfps.databinding.FragmentProfileBinding
+import com.dejongdevelopment.golfps.databinding.FragmentSettingsBinding
 
-class ProfileFragment: Fragment() {
-    private var _binding: FragmentProfileBinding? = null
+class SettingsFragment: Fragment() {
+    private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -16,7 +16,7 @@ class ProfileFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
