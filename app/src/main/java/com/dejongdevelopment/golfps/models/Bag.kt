@@ -28,6 +28,10 @@ class Bag {
 
     private var clubIds:List<String>
         get() {
+            val storedIdSet = GolfApplication.preferences?.getStringSet("assigned_club_ids", null)
+            if (storedIdSet != null) {
+                return storedIdSet.filter { it.isNotBlank() }
+            }
             val storedIds = GolfApplication.preferences?.getString("assignedclubids", "") ?: ""
             if (storedIds.isBlank()) {
                 return listOf()
@@ -36,7 +40,9 @@ class Bag {
         }
         set(newIds) {
             GolfApplication.preferences?.edit()?.let { editor ->
-                editor.putString("assignedclubids", newIds.joinToString("|"))
+                val uniqueIds = LinkedHashSet(newIds.filter { it.isNotBlank() })
+                editor.putStringSet("assigned_club_ids", uniqueIds)
+                editor.putString("assignedclubids", uniqueIds.joinToString("|"))
                 editor.apply()
             }
         }
@@ -121,6 +127,8 @@ class Bag {
     }
 
     private fun activeClubs(clubs: List<Club>) {
+        myClubs.forEach { it.deactivateClub() }
+        myClubs.clear()
         clubIds = clubs.map { it.id }
 
         clubs.forEach { it.activateClub() }
@@ -151,6 +159,7 @@ class Bag {
 
         val clubToDeactivate = myClubs.removeAt(index)
         clubToDeactivate.deactivateClub()
+        clubIds = myClubs.map { it.id }
         numberOfClubs = myClubs.count()
     }
 
@@ -165,7 +174,7 @@ class Bag {
 
     fun addClub(club: Club) {
         val existingIds = clubIds.toMutableList()
-        existingIds.add(club.id)
+        if (!existingIds.contains(club.id)) existingIds.add(club.id)
         clubIds = existingIds
 
         club.activateClub()
@@ -181,6 +190,7 @@ class Bag {
 
         myClubs.removeAt(source)
         myClubs.add(destination.coerceIn(0, myClubs.count()), club)
+        clubIds = myClubs.map { it.id }
     }
 
     fun sortClubs() {

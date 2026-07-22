@@ -56,6 +56,11 @@ class BagFragment: Fragment() {
         _binding = null
     }
 
+    override fun onPause() {
+        activity?.currentFocus?.clearFocus()
+        super.onPause()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

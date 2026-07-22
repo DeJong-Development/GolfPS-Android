@@ -240,6 +240,9 @@ identified and an explicit cross-platform fix is approved.
 - [x] Clearer distance-marker creation, dragging, dismissal, and first-use guidance
 - [x] Map camera padding that keeps hole content clear of controls
 - [x] Modern Android location and vibration APIs with legacy-device fallback
+- [x] iOS-aligned lightweight course/yardage overlay
+- [x] cupholder mode moves hole navigation above the map content
+- [x] durable bag ID storage with legacy-key migration and complete mutation persistence
 
 ## Wave 4: Social And Achievement Parity
 

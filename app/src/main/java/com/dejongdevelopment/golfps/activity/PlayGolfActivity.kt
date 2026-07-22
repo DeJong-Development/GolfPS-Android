@@ -19,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnLayout
 import androidx.core.view.size
 import androidx.fragment.app.FragmentActivity
+import androidx.constraintlayout.widget.ConstraintSet
 import com.dejongdevelopment.golfps.BuildConfig
 import com.dejongdevelopment.golfps.GolfApplication
 import com.dejongdevelopment.golfps.databinding.ActivityPlayGolfBinding
@@ -132,6 +133,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
         binding.courseName.text = course.name
         binding.ambassadorBadge.visibility =
             if (GolfApplication.me.isAmbassadorOf(course)) View.VISIBLE else View.GONE
+        applyDisplayMode()
         showAmbassadorMessageIfNeeded(course)
 
         if (course.holes.isNotEmpty() && this.mapReady) {
@@ -404,8 +406,42 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
             horizontalPadding,
             binding.mapHeader.bottom + verticalPadding,
             horizontalPadding,
-            binding.playRoot.height - binding.holeControls.top + verticalPadding
+            if (GolfApplication.cupholderMode) {
+                verticalPadding
+            } else {
+                binding.playRoot.height - binding.holeControls.top + verticalPadding
+            }
         )
+    }
+
+    private fun applyDisplayMode() {
+        val constraints = ConstraintSet().apply { clone(binding.playRoot) }
+        val controlsId = binding.holeControls.id
+        val headerId = binding.mapHeader.id
+        val closeId = binding.closeButton.id
+        val margin = (12 * resources.displayMetrics.density).toInt()
+        val compactMargin = (8 * resources.displayMetrics.density).toInt()
+
+        if (GolfApplication.cupholderMode) {
+            constraints.clear(controlsId, ConstraintSet.BOTTOM)
+            constraints.connect(controlsId, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, margin)
+
+            constraints.clear(headerId, ConstraintSet.TOP)
+            constraints.connect(headerId, ConstraintSet.TOP, controlsId, ConstraintSet.BOTTOM, compactMargin)
+            constraints.clear(closeId, ConstraintSet.TOP)
+            constraints.connect(closeId, ConstraintSet.TOP, controlsId, ConstraintSet.BOTTOM, compactMargin)
+        } else {
+            constraints.clear(controlsId, ConstraintSet.TOP)
+            constraints.connect(controlsId, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, margin)
+
+            constraints.clear(headerId, ConstraintSet.TOP)
+            constraints.connect(headerId, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, margin)
+            constraints.clear(closeId, ConstraintSet.TOP)
+            constraints.connect(closeId, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, margin)
+        }
+
+        constraints.applyTo(binding.playRoot)
+        binding.playRoot.doOnLayout { updateMapContentPadding() }
     }
 
     private fun showDistanceMarkerHintIfNeeded() {
