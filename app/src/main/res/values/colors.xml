@@ -5,11 +5,24 @@
     <color name="text">#000000</color>
     <color name="background">#FFFFFF</color>
     <color name="gold">#C3A767</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_alt">#F5F6F2</color>
+    <color name="surface_strong">#ECEEE6</color>
+    <color name="border">#D7DCCD</color>
+    <color name="muted_text">#70000000</color>
+    <color name="soft_text">#99000000</color>
+    <color name="input_background">#FFFFFF</color>
+    <color name="tab_background">#007A00</color>
+    <color name="tab_selected">#FFFFFF</color>
+    <color name="tab_unselected">#DE000000</color>
+    <color name="danger">#B3261E</color>
+    <color name="icon_background">#EAF4EA</color>
+    <color name="splash_scrim">#66000000</color>
 
     <color name="colorPrimary">#007A00</color>
 
     <color name="colorText">#000000</color>
-    <color name="colorTextLite">#33000000</color>
+    <color name="colorTextLite">#70000000</color>
 
     <color name="background1">#FFFFFF</color>
     <color name="background2">#EFEFEF</color>

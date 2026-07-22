@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="@drawable/app_surface"
     android:orientation="vertical">
 
     <ImageView
@@ -26,7 +27,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="234yds"
-            android:textColor="#ff000000"
+            android:textColor="@color/text"
             android:textSize="14sp"
             android:textStyle="bold" />
 
@@ -37,7 +38,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="Driver"
-            android:textColor="#ff7f7f7f"
+            android:textColor="@color/muted_text"
             android:textSize="14sp" />
     </LinearLayout>
 </LinearLayout>

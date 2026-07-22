@@ -63,6 +63,7 @@
         </activity>
         <activity android:name=".activity.PlayGolfActivity" />
         <activity android:name=".activity.AddCourseActivity" />
+        <activity android:name=".activity.AddClubActivity" />
     </application>
 
 </manifest>

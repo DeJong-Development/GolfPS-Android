@@ -3,17 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
 
     <TextView
         android:id="@+id/addCourseTitleLabel"
+        style="@style/GolfPS.ScreenTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:text="COURSE INFORMATION"
-        android:textColor="@color/colorText"
-        android:textSize="24sp"
-        android:textStyle="bold"
+        android:layout_marginTop="32dp"
+        android:text="@string/add_course_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,119 +25,145 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
+        android:background="@drawable/app_surface"
         android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addCourseTitleLabel">
 
         <TextView
             android:id="@+id/courseNameTitle"
+            style="@style/GolfPS.SectionLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Course Name"
-            android:textColor="@color/colorText"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:text="@string/add_course_name_label" />
 
         <EditText
             android:id="@+id/courseNameEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="52dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/app_input_background"
             android:ems="10"
-            android:hint="Hickory Knoll"
+            android:hint="@string/course_select_search_hint"
             android:inputType="text"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/text"
+            android:textColorHint="@color/muted_text"
             android:singleLine="true" />
 
         <TextView
             android:id="@+id/cityTitle"
+            style="@style/GolfPS.SectionLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="City"
-            android:textColor="@color/colorText"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="14dp"
+            android:text="@string/add_course_city_label" />
 
         <EditText
             android:id="@+id/cityEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="52dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/app_input_background"
             android:ems="10"
-            android:hint="Whitehall"
+            android:hint="@string/add_course_city_hint"
             android:inputType="text"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/text"
+            android:textColorHint="@color/muted_text"
             android:singleLine="true" />
 
         <TextView
             android:id="@+id/stateNameTitle"
+            style="@style/GolfPS.SectionLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="State"
-            android:textColor="@color/colorText"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="14dp"
+            android:text="@string/add_course_state_label" />
 
         <EditText
             android:id="@+id/stateEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="52dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/app_input_background"
             android:ems="10"
-            android:hint="Michigan"
+            android:hint="@string/add_course_state_hint"
             android:inputType="text"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/text"
+            android:textColorHint="@color/muted_text"
             android:singleLine="true" />
 
         <TextView
             android:id="@+id/countryTitle"
+            style="@style/GolfPS.SectionLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Country"
-            android:textColor="@color/colorText"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="14dp"
+            android:text="@string/add_course_country_label" />
 
         <EditText
             android:id="@+id/countryEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="52dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/app_input_background"
             android:ems="10"
-            android:hint="USA"
+            android:hint="@string/add_course_country_hint"
             android:inputType="text"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/text"
+            android:textColorHint="@color/muted_text"
             android:singleLine="true"
             android:text="USA" />
     </LinearLayout>
 
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/submitRequestButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="50dp"
-        android:text="Submit"
+        style="@style/GolfPS.PrimaryButton"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/add_course_submit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/cancelRequestButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:backgroundTint="@color/gray"
-        android:text="Cancel"
+        style="@style/GolfPS.TextButton"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/add_course_cancel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/submitRequestButton" />
 
     <TextView
         android:id="@+id/textView"
+        style="@style/GolfPS.BodyText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="12dp"
-        android:layout_marginEnd="80dp"
+        android:layout_marginEnd="40dp"
         android:layout_marginBottom="20dp"
-        android:text="This will send a request to the hard working developer. He will add the course details when he can.  \nPatience please!"
+        android:text="@string/add_course_request_message"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -153,6 +178,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:cardCornerRadius="20dp"
+        app:cardBackgroundColor="@color/surface"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

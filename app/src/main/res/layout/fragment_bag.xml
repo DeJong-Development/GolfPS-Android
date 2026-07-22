@@ -3,41 +3,144 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".fragment.BagFragment">
 
     <TextView
-        android:id="@+id/courseNameLabel"
+        android:id="@+id/bagTitleLabel"
+        style="@style/GolfPS.ScreenTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="My Golf Bag"
-        android:textColor="@color/colorText"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:layout_marginTop="18dp"
+        android:text="@string/bag_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/addClubButton"
+        style="@style/GolfPS.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginEnd="12dp"
+        android:text="@string/bag_add_club"
+        app:icon="@android:drawable/ic_input_add"
+        app:iconGravity="textStart"
+        app:layout_constraintBottom_toBottomOf="@+id/bagTitleLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/bagTitleLabel" />
+
     <TextView
         android:id="@+id/golfBagExplanation"
-        android:layout_width="wrap_content"
+        style="@style/GolfPS.BodyText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="8dp"
-        android:text="Modify these values to get accurate club recommendations!"
+        android:layout_marginEnd="20dp"
+        android:text="@string/bag_explanation"
         android:textAlignment="center"
-        android:textColor="@color/colorText"
-        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/courseNameLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/bagTitleLabel" />
+
+    <TextView
+        android:id="@+id/emptyBagLabel"
+        style="@style/GolfPS.BodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="28dp"
+        android:text="@string/bag_empty"
+        android:textAlignment="center"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/golfBagExplanation" />
+
+    <LinearLayout
+        android:id="@+id/pickBagView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/app_surface"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="20dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emptyBagLabel">
+
+        <TextView
+            android:id="@+id/pickBagTitleLabel"
+            style="@style/GolfPS.ScreenTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bag_default_title"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/pickBagMessageLabel"
+            style="@style/GolfPS.BodyText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/bag_default_message"
+            android:textAlignment="center" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/proBagButton"
+            style="@style/GolfPS.PrimaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/bag_default_pro" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/longBagButton"
+            style="@style/GolfPS.PrimaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/bag_default_long" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/averageBagButton"
+            style="@style/GolfPS.PrimaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/bag_default_average" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/customBagButton"
+            style="@style/GolfPS.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/bag_default_custom" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/golfBagList"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/app_surface"
+        android:clipToPadding="false"
+        android:paddingTop="6dp"
+        android:paddingBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

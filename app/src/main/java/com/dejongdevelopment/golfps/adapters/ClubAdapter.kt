@@ -1,65 +1,99 @@
 package com.dejongdevelopment.golfps.adapters
 
-import android.content.Context
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
-import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.recyclerview.widget.RecyclerView
+import android.view.ViewGroup
 import com.dejongdevelopment.golfps.databinding.CellClubBinding
 import com.dejongdevelopment.golfps.models.Club
+import com.dejongdevelopment.golfps.tools.ClubTools
 
 class ClubAdapter(
-    private var clubs: List<Club>
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val clubs: MutableList<Club>,
+    private val onClubUpdated: (Club) -> Unit,
+    private val onClubRemoved: (Club) -> Unit
+) : RecyclerView.Adapter<ClubAdapter.ClubViewHolder>() {
 
     class ClubViewHolder(val binding: CellClubBinding) : RecyclerView.ViewHolder(binding.root)
 
-    private lateinit var context: Context
-
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ClubViewHolder {
-        this.context = parent.context
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClubViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-
         return ClubViewHolder(CellClubBinding.inflate(inflater, parent, false))
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (position > this.clubs.size) {
-            return
-        }
-        if (holder !is ClubViewHolder) {
-            return
-        }
-
-        val club = this.clubs[position]
+    override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
+        val club = clubs.getOrNull(position) ?: return
 
         holder.binding.apply {
-            this.myBagClubName.setText(club.name)
-            this.myBagDistance.setText(club.distance.toString())
+            myBagClubName.setText(club.name)
+            myBagDistance.setText(club.distance.toString())
 
-            myBagClubName.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-                override fun afterTextChanged(s: Editable) {
-                    club.name = s.toString()
+            myBagClubName.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    cleanAndSaveClubName(holder.binding, club)
                 }
-            })
+            }
 
-            myBagDistance.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-                override fun afterTextChanged(s: Editable) {
-                    s.toString().toIntOrNull()?.let {
-                        club.distance = it
-                    }
+            myBagClubName.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    cleanAndSaveClubName(holder.binding, club)
+                    myBagClubName.clearFocus()
+                    true
+                } else {
+                    false
                 }
-            })
+            }
+
+            myBagDistance.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    cleanAndSaveClubDistance(holder.binding, club)
+                }
+            }
+
+            myBagDistance.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    cleanAndSaveClubDistance(holder.binding, club)
+                    myBagDistance.clearFocus()
+                    true
+                } else {
+                    false
+                }
+            }
+
+            removeClubButton.setOnClickListener {
+                onClubRemoved(club)
+            }
         }
     }
 
     override fun getItemCount(): Int = clubs.size
+
+    private fun cleanAndSaveClubName(binding: CellClubBinding, club: Club) {
+        val cleanName = ClubTools.cleanClubName(binding.myBagClubName.text?.toString()).trim()
+        if (cleanName.isBlank()) {
+            binding.myBagClubName.setText(club.name)
+            return
+        }
+
+        binding.myBagClubName.setText(cleanName)
+        if (club.name != cleanName) {
+            club.name = cleanName
+            onClubUpdated(club)
+        }
+    }
+
+    private fun cleanAndSaveClubDistance(binding: CellClubBinding, club: Club) {
+        val cleanDistance = ClubTools.cleanClubDistance(binding.myBagDistance.text?.toString()).trim()
+        val distance = cleanDistance.toIntOrNull()
+        if (distance == null) {
+            binding.myBagDistance.setText(club.distance.toString())
+            return
+        }
+
+        binding.myBagDistance.setText(cleanDistance)
+        if (club.distance != distance) {
+            club.distance = distance
+            onClubUpdated(club)
+        }
+    }
 }

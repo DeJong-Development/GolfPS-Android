@@ -4,52 +4,90 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="4dp">
+    android:minHeight="64dp"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp">
 
-    <TextView
-        android:id="@+id/cell_course_name"
+    <ImageView
+        android:id="@+id/cell_course_ambassador"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:contentDescription="@string/course_select_ambassador_badge"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/courseTextGroup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/courseTextGroup"
+        app:srcCompat="@drawable/ambassador"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/courseTextGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:text="Course Name"
-        android:textColor="@color/colorText"
-        android:textSize="18sp"
+        android:orientation="vertical"
+        android:paddingStart="6dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/course_spacer"
         app:layout_constraintEnd_toStartOf="@+id/cell_course_state_icon"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/cell_course_ambassador"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/cell_course_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/text"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="Course Name" />
+
+        <TextView
+            android:id="@+id/cell_course_distance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/muted_text"
+            android:textSize="13sp"
+            tools:text="4.2 mi" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/cell_course_state"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="5dp"
-        android:text="MI"
         android:textAlignment="center"
-        android:textColor="@color/colorText"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/cell_course_name"
+        android:textColor="@color/muted_text"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/courseTextGroup"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/cell_course_name" />
+        app:layout_constraintTop_toTopOf="@+id/courseTextGroup"
+        tools:text="MI" />
 
     <ImageView
         android:id="@+id/cell_course_state_icon"
         android:layout_width="40dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/cell_course_name"
+        android:layout_height="40dp"
+        android:tint="@color/grass"
+        app:layout_constraintBottom_toBottomOf="@+id/courseTextGroup"
         app:layout_constraintEnd_toStartOf="@+id/cell_course_state"
-        app:layout_constraintTop_toTopOf="@+id/cell_course_name"
-        app:srcCompat="@drawable/california"
-        android:tint="@color/colorPrimary" />
+        app:layout_constraintTop_toTopOf="@+id/courseTextGroup"
+        app:srcCompat="@drawable/california" />
 
     <View
         android:id="@+id/course_spacer"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="2dp"
-        android:background="@color/colorTextLite"
-        android:paddingTop="4dp"
+        android:background="@color/border"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cell_course_name" />
+        app:layout_constraintTop_toBottomOf="@+id/courseTextGroup"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

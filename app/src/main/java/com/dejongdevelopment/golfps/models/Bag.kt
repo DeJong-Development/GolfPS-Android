@@ -125,7 +125,6 @@ class Bag {
 
         clubs.forEach { it.activateClub() }
 
-        myClubs.clear()
         myClubs.addAll(clubs)
         numberOfClubs = myClubs.count()
         sortClubs()
@@ -152,7 +151,6 @@ class Bag {
 
         val clubToDeactivate = myClubs.removeAt(index)
         clubToDeactivate.deactivateClub()
-        clubIds = myClubs.map { it.id }
         numberOfClubs = myClubs.count()
     }
 
@@ -183,15 +181,13 @@ class Bag {
 
         myClubs.removeAt(source)
         myClubs.add(destination.coerceIn(0, myClubs.count()), club)
-        clubIds = myClubs.map { it.id }
     }
 
     fun sortClubs() {
         myClubs.sortByDescending { it.distance }
 
         for (i in 0 until myClubs.count()) {
-            myClubs[i].order = i
+            myClubs[i].order = i + 1
         }
-        clubIds = myClubs.map { it.id }
     }
 }

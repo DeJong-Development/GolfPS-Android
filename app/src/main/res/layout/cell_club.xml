@@ -3,33 +3,61 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="64dp"
+    android:paddingStart="10dp"
+    android:paddingEnd="8dp">
 
     <EditText
         android:id="@+id/myBagClubName"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_height="48dp"
         android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:minHeight="48dp"
-        android:text="Club Name"
+        android:background="@drawable/app_input_background"
+        android:imeOptions="actionDone"
+        android:inputType="textCapWords"
+        android:maxLines="1"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:singleLine="true"
+        android:textColor="@color/text"
+        android:textColorHint="@color/muted_text"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/myBagDistance"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="7 Iron" />
 
     <EditText
         android:id="@+id/myBagDistance"
-        android:layout_width="100dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="10dp"
-        android:ems="10"
+        android:layout_width="88dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/app_input_background"
+        android:imeOptions="actionDone"
         android:inputType="number"
-        android:text="100"
+        android:maxLines="1"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:singleLine="true"
         android:textAlignment="viewEnd"
+        android:textColor="@color/text"
+        android:textColorHint="@color/muted_text"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/myBagClubName"
+        app:layout_constraintEnd_toStartOf="@+id/removeClubButton"
+        app:layout_constraintTop_toTopOf="@+id/myBagClubName"
+        tools:text="150" />
+
+    <ImageButton
+        android:id="@+id/removeClubButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/bag_remove_club"
+        android:src="@android:drawable/ic_menu_delete"
         app:layout_constraintBottom_toBottomOf="@+id/myBagClubName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/myBagClubName" />
+        app:layout_constraintTop_toTopOf="@+id/myBagClubName"
+        app:tint="@color/danger" />
 </androidx.constraintlayout.widget.ConstraintLayout>

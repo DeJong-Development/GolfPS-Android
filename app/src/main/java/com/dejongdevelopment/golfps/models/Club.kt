@@ -5,15 +5,25 @@ import java.util.UUID
 
 class Club {
     val id: String
+    private var storedOrder: Int
+    private var storedName: String?
+    private var storedDistance: Int?
 
     constructor(id: String) {
         this.id = id
+        this.storedOrder = GolfApplication.preferences?.getInt("cluborder$id", 0) ?: 0
+        this.storedName = GolfApplication.preferences?.getString("clubname$id", null)
+        this.storedDistance = GolfApplication.preferences?.getInt("clubdistance$id", -1)
+            ?.takeIf { it > 0 }
     }
 
     constructor(name: String, distance: Int) {
         this.id = UUID.randomUUID().toString()
-        this.name = name
-        this.distance = distance
+        this.storedOrder = 0
+        this.storedName = name
+        this.storedDistance = distance
+        persistName(name)
+        persistDistance(distance)
     }
 
     private val defaultName:String
@@ -62,8 +72,9 @@ class Club {
         get() = if (GolfApplication.metric) (defaultYards.toDouble() * 0.9144).toInt() else defaultYards
 
     var order:Int
-        get() = GolfApplication.preferences?.getInt("cluborder$id", 0) ?: 0
+        get() = storedOrder
         set(newOrder) {
+            storedOrder = newOrder
             GolfApplication.preferences?.edit()?.let { editor ->
                 editor.putInt("cluborder$id", newOrder)
                 editor.apply()
@@ -71,27 +82,19 @@ class Club {
         }
 
     var name:String
-        get() = GolfApplication.preferences?.getString("clubname$id", defaultName) ?: defaultName
+        get() = storedName ?: defaultName
         set(newName) {
-            GolfApplication.preferences?.edit()?.let { editor ->
-                editor.putString("clubname$id", newName)
-                editor.apply()
-            }
+            storedName = newName
+            persistName(newName)
         }
 
     var distance:Int
         get() {
-            val distance = GolfApplication.preferences?.getInt("clubdistance$id", defaultDistance) ?: defaultDistance
-            if (distance > 0) {
-                return distance
-            }
-            return defaultDistance
+            return storedDistance?.takeIf { it > 0 } ?: defaultDistance
         }
         set(newDistance) {
-            GolfApplication.preferences?.edit()?.let { editor ->
-                editor.putInt("clubdistance$id", newDistance)
-                editor.apply()
-            }
+            storedDistance = newDistance
+            persistDistance(newDistance)
         }
 
     val isActive:Boolean
@@ -107,6 +110,20 @@ class Club {
     fun deactivateClub() {
         GolfApplication.preferences?.edit()?.let { editor ->
             editor.putBoolean("clubnotactive$id", true)
+            editor.apply()
+        }
+    }
+
+    private fun persistName(newName: String) {
+        GolfApplication.preferences?.edit()?.let { editor ->
+            editor.putString("clubname$id", newName)
+            editor.apply()
+        }
+    }
+
+    private fun persistDistance(newDistance: Int) {
+        GolfApplication.preferences?.edit()?.let { editor ->
+            editor.putInt("clubdistance$id", newDistance)
             editor.apply()
         }
     }

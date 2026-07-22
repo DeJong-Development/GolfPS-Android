@@ -3,18 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
 
     <TextView
         android:id="@+id/courseNameLabel"
+        style="@style/GolfPS.ScreenTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Course Name"
-        android:textColor="@color/colorText"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="18dp"
+        android:text="@string/course_select_title"
+        android:textSize="22sp"
         app:layout_constraintEnd_toStartOf="@+id/stateLabel"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,66 +22,120 @@
 
     <TextView
         android:id="@+id/stateLabel"
+        style="@style/GolfPS.SectionLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="State"
-        android:textColor="@color/colorText"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/course_select_state"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editTextCourseFilter"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/app_input_background"
         android:ems="10"
-        android:hint="Hickory Knoll"
+        android:hint="@string/course_select_search_hint"
         android:inputType="text"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
         android:singleLine="true"
+        android:textColor="@color/text"
+        android:textColorHint="@color/muted_text"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/stateLabel"
         app:layout_constraintStart_toStartOf="@+id/courseNameLabel"
         app:layout_constraintTop_toBottomOf="@+id/courseNameLabel" />
+
+    <LinearLayout
+        android:id="@+id/locationPermissionPrompt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/app_surface"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="12dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/editTextCourseFilter"
+        app:layout_constraintStart_toStartOf="@+id/editTextCourseFilter"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCourseFilter"
+        tools:visibility="visible">
+
+        <TextView
+            style="@style/GolfPS.SectionLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/location_permission_prompt_title" />
+
+        <TextView
+            style="@style/GolfPS.BodyText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/location_permission_prompt_message" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/openLocationSettingsButton"
+            style="@style/GolfPS.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/location_permission_open_settings"
+            app:icon="@android:drawable/ic_menu_mylocation"
+            app:iconGravity="textStart" />
+    </LinearLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/courseRefreshLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/addCourseButton"
+        app:layout_constraintEnd_toEndOf="@+id/editTextCourseFilter"
+        app:layout_constraintStart_toStartOf="@+id/editTextCourseFilter"
+        app:layout_constraintTop_toBottomOf="@+id/locationPermissionPrompt">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/availableCourseRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/app_surface"
+            android:clipToPadding="false"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/cell_course" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/loadingCoursesBar"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextCourseFilter" />
+        android:elevation="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/courseRefreshLayout"
+        app:layout_constraintEnd_toEndOf="@+id/courseRefreshLayout"
+        app:layout_constraintStart_toStartOf="@+id/courseRefreshLayout"
+        app:layout_constraintTop_toTopOf="@+id/courseRefreshLayout" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/availableCourseRecyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/addCourseButton"
-        app:layout_constraintEnd_toEndOf="@+id/editTextCourseFilter"
-        app:layout_constraintStart_toStartOf="@+id/editTextCourseFilter"
-        app:layout_constraintTop_toBottomOf="@+id/editTextCourseFilter"
-        tools:listitem="@layout/cell_course" />
-
-    <androidx.appcompat.widget.AppCompatButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/addCourseButton"
+        style="@style/GolfPS.GoldButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:background="@color/gold"
-        android:fontFamily="@font/permanent_marker"
-        android:text="ADD NEW COURSE"
-        android:textColor="@color/black"
-        android:textSize="20sp"
+        android:layout_height="52dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/course_select_add_course"
+        app:icon="@android:drawable/ic_input_add"
+        app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/availableCourseRecyclerView"
-        app:layout_constraintStart_toStartOf="@+id/availableCourseRecyclerView" />
+        app:layout_constraintEnd_toEndOf="@+id/courseRefreshLayout"
+        app:layout_constraintStart_toStartOf="@+id/courseRefreshLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

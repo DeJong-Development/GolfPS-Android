@@ -4,12 +4,19 @@ import com.dejongdevelopment.golfps.GolfApplication
 import com.dejongdevelopment.golfps.models.Course
 import com.dejongdevelopment.golfps.models.Hole
 import com.dejongdevelopment.golfps.util.toMeters
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 object CourseTools {
+    data class CoursePage(
+        val courses: List<Course>,
+        val lastDocument: DocumentSnapshot?,
+        val hasMore: Boolean
+    )
+
     fun getAvailableStates(completion: (List<String>, Exception?) -> Unit) {
         Firebase.firestore.collection("courses")
             .orderBy("state")
@@ -59,6 +66,38 @@ object CourseTools {
                     }
                 }
         }
+    }
+
+    fun getCourses(
+        limit: Long,
+        afterDocument: DocumentSnapshot? = null,
+        completion: (CoursePage, Exception?) -> Unit
+    ) {
+        var query: Query = Firebase.firestore.collection("courses")
+            .orderBy("name")
+            .limit(limit)
+
+        afterDocument?.let {
+            query = query.startAfter(it)
+        }
+
+        query.get()
+            .addOnSuccessListener { snapshot ->
+                val courses = snapshot.documents.mapNotNull { document ->
+                    document.data?.let { Course(document.id, it) }
+                }
+                completion(
+                    CoursePage(
+                        courses = courses,
+                        lastDocument = snapshot.documents.lastOrNull(),
+                        hasMore = snapshot.documents.size.toLong() == limit
+                    ),
+                    null
+                )
+            }
+            .addOnFailureListener {
+                completion(CoursePage(listOf(), afterDocument, false), it)
+            }
     }
 
     fun getCourses(inState: String, completion: (List<Course>, Exception?) -> Unit) {

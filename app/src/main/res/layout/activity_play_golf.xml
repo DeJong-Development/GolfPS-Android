@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background2">
+    android:background="@color/background">
 
     <FrameLayout
         android:id="@+id/content_frame"
@@ -14,7 +14,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/background2"
+        android:backgroundTint="@color/background"
         app:layout_constraintBottom_toTopOf="@+id/previousButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,13 +30,14 @@
         android:layout_centerHorizontal="true"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/rounded_bordered_background"
+        android:background="@drawable/play_overlay_background"
         android:paddingLeft="10dp"
         android:paddingTop="5dp"
         android:paddingRight="10dp"
         android:paddingBottom="5dp"
         android:text="Course Name"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/white"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -69,7 +70,7 @@
         android:shadowDy="1"
         android:shadowRadius="1"
         android:text="-"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/distanceToPin"
         app:layout_constraintTop_toBottomOf="@+id/distanceToPin" />
@@ -81,8 +82,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="20dp"
-        android:background="@drawable/rounded_background"
-        android:backgroundTint="@color/colorText"
+        android:background="@drawable/app_surface"
         android:gravity="center"
         android:src="@android:drawable/arrow_down_float"
         android:textSize="30sp"
@@ -91,7 +91,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/courseName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/courseName"
-        app:tint="@color/background1" />
+        app:tint="@color/text" />
 
     <TextView
         android:id="@+id/holeNumberLabel"
@@ -105,37 +105,42 @@
         android:shadowDy="1"
         android:shadowRadius="1"
         android:text="#1"
-        android:textColor="@color/colorText"
+        android:textColor="@color/text"
         android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/content_frame" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/previousButton"
+        style="@style/GolfPS.OutlinedButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/rounded_bordered_background_transparent"
-        android:text="↢ Prev"
+        android:text="@string/play_previous"
+        app:icon="@android:drawable/ic_media_previous"
+        app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/nextButton"
+        style="@style/GolfPS.OutlinedButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/rounded_bordered_background_transparent"
-        android:text="Next ↣"
+        android:text="@string/play_next"
+        app:icon="@android:drawable/ic_media_next"
+        app:iconGravity="textEnd"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

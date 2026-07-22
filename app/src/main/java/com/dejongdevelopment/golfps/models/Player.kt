@@ -21,7 +21,11 @@ open class Player(id: String) {
     var avatarURL: URL? = null
         private set
     var ambassadorCourses: List<String> = listOf()
-        private set
+        protected set
+
+    init {
+        this.id = id
+    }
 
     val docReference: DocumentReference?
         get() {
@@ -32,7 +36,9 @@ open class Player(id: String) {
     constructor(id: String, data:MutableMap<String,Any>) : this(id) {
         this.geoPoint = data["location"] as? GeoPoint
         this.lastLocationUpdate = (data["updateTime"] as? Timestamp)?.toDate()
-        this.ambassadorCourses = data["ambassadorCourses"] as? List<String> ?: listOf()
+        this.ambassadorCourses = (data["ambassadorCourses"] as? List<*>)
+            ?.filterIsInstance<String>()
+            ?: listOf()
 
         val avatarPath = data["image"] as? String
         avatarPath?.takeIf { it.isNotBlank() }?.let {
@@ -42,6 +48,13 @@ open class Player(id: String) {
 }
 
 class Me(id:String) : Player(id) {
+    constructor(id: String, data: MutableMap<String, Any>) : this(id) {
+        this.geoPoint = data["location"] as? GeoPoint
+        this.ambassadorCourses = (data["ambassadorCourses"] as? List<*>)
+            ?.filterIsInstance<String>()
+            ?: listOf()
+    }
+
     var numStrokes:Int = 0
 
     val badges:List<Badge> = listOf(

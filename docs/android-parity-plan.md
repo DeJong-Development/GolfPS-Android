@@ -172,21 +172,47 @@ Wave 0 color work:
 
 ## Wave 1: Settings Parity
 
-- Implement Android settings behavior instead of placeholder UI.
-- Include units toggle, display/cupholder mode, location sharing, Bitmoji sharing placeholder/disabled state, privacy link, and terms link.
+- Implemented Android settings behavior instead of placeholder UI.
+- Included units toggle, display/cupholder mode, location sharing, Bitmoji sharing placeholder/disabled state, privacy link, and terms link.
 - Persist settings through `GolfApplication` / shared preferences using iOS-aligned keys.
 - Keep Firestore player cleanup behavior aligned when location sharing is disabled.
+- Logged the same high-level analytics events as iOS settings.
 
 ## Wave 2: Bag Parity
 
-- Add club creation/editing flow similar to iOS `AddClubViewController`.
-- Port `ClubTools` cleaning/validation behavior.
+- Added inline default bag selection for empty bags.
+- Added club creation flow similar to iOS `AddClubViewController`.
+- Ported `ClubTools` cleaning/validation behavior into add and edit flows.
 - Persist bag customization flags consistently.
-- Validate Android list refresh and empty/error states.
+- Added inline edit cleanup, club removal, list refresh, and empty states.
+- Manual drag reorder remains optional polish because clubs are sorted by distance for recommendations.
+
+## Design System Pass
+
+- Added a first-class Android resource layer for the GolfPS look:
+  - semantic light/dark colors for background, surface, text, grass, gold, borders, inputs, tabs, and destructive actions
+  - shared rounded surface, input, overlay, button, chip, and title styles
+  - selected/unselected color selectors for chips and the main tab bar
+- Updated the main tab shell, course selection, bag, settings, add-club, add-course, play-map chrome, and info window layouts to use theme-aware resources.
+- Kept Android-native controls first: Material buttons, chips, switches, tab layout, EditText fields, and RecyclerView lists.
+- Used the playful display font selectively for screen titles and major action buttons to echo the iOS Marker Felt feel without making dense controls noisy.
+- Removed the unused legacy profile layout so Android stays clean and aligned with the current Settings structure.
+- Verified both light and dark mode are driven by `values` / `values-night` resources instead of one-off layout colors.
 
 ## Wave 3: Play Map Parity
 
 - Compare Android `PlayGolfActivity` against iOS map controllers.
+- Started with Course Select parity because it feeds the map entry flow:
+  - load the signed-in player document before building tabs so ambassador course data is available
+  - fix Android `Player` ID assignment so the authenticated user ID is used consistently
+  - show iOS-style Course Select sections for Ambassador, Nearby, Visited, and Search Results
+  - load nearby courses from the player's current state when location permission is available
+  - fall back to a lazy-loaded Available section only when location is denied or cannot be determined
+  - show course distance labels when a course spectation point and player location are available
+  - show ambassador badges in course rows
+  - keep empty section messages instead of silent blank lists
+  - add Android pull-to-refresh for course reloads, matching iOS `UIRefreshControl`
+  - relax fixed-height text rows that were clipping after the design pass
 - Port missing high-value behavior:
   - ambassador state and message
   - long-drive controls

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/courseSectionTitle"
+    style="@style/GolfPS.SectionLabel"
+    android:layout_width="match_parent"
+    android:layout_height="38dp"
+    android:background="@color/surface_alt"
+    android:gravity="center_vertical"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:singleLine="true"
+    android:textAllCaps="true"
+    android:textSize="12sp" />

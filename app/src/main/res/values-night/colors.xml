@@ -1,13 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="text">#ffffff</color>
-    <color name="background">#000000</color>
+    <color name="accent">#30A446</color>
+    <color name="grass">#30A446</color>
+    <color name="text">#F8FAF3</color>
+    <color name="background">#11130F</color>
+    <color name="gold">#D6BE77</color>
+    <color name="surface">#1A1D17</color>
+    <color name="surface_alt">#22271E</color>
+    <color name="surface_strong">#2B3126</color>
+    <color name="border">#3B4636</color>
+    <color name="muted_text">#B3F8FAF3</color>
+    <color name="soft_text">#CCF8FAF3</color>
+    <color name="input_background">#151812</color>
+    <color name="tab_background">#0E5F1E</color>
+    <color name="tab_selected">#FFFFFF</color>
+    <color name="tab_unselected">#CCFFFFFF</color>
+    <color name="danger">#F2B8B5</color>
+    <color name="icon_background">#11130F</color>
+    <color name="splash_scrim">#99000000</color>
 
-    <color name="colorText">#ffffff</color>
-    <color name="colorTextLite">#33ffffff</color>
+    <color name="colorPrimary">#30A446</color>
 
-    <color name="background1">#222222</color>
-    <color name="background2">#1A1A1A</color>
-    <color name="background3">#111111</color>
-    <color name="background4">#000000</color>
+    <color name="colorText">#F8FAF3</color>
+    <color name="colorTextLite">#B3F8FAF3</color>
+
+    <color name="background1">#11130F</color>
+    <color name="background2">#1A1D17</color>
+    <color name="background3">#22271E</color>
+    <color name="background4">#2B3126</color>
+
+    <color name="dark1">#222222</color>
+    <color name="dark2">#1A1A1A</color>
+    <color name="dark3">#111111</color>
+    <color name="dark4">#000000</color>
+    <color name="light1">#FFFFFF</color>
+    <color name="light2">#EFEFEF</color>
+    <color name="light3">#DFDFDF</color>
+    <color name="light4">#CFCFCF</color>
+
+    <color name="silver">#C6C6C6</color>
+    <color name="bronze">#BD9274</color>
+
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="gray">#A6A6A6</color>
 </resources>
