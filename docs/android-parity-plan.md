@@ -215,11 +215,15 @@ Wave 0 color work:
   - relax fixed-height text rows that were clipping after the design pass
 - Port missing high-value behavior:
   - ambassador state and message
-  - long-drive controls
-  - drive mark/clear behavior
-  - selected club and distance behavior
+  - [x] long-drive controls
+  - [x] drive mark/clear behavior
+  - [x] selected club and distance behavior
   - marker tools and map updates
   - Wear OS updates equivalent to iOS watch updates where applicable
+
+Wind and elevation adjustments are intentionally deferred until both platforms are
+ready for a coordinated polish pass. iOS remains unchanged unless a shared bug is
+identified and an explicit cross-platform fix is approved.
 
 ## Wave 4: Social And Achievement Parity
 

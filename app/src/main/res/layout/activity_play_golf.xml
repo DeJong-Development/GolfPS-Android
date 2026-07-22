@@ -75,6 +75,55 @@
         app:layout_constraintStart_toStartOf="@+id/distanceToPin"
         app:layout_constraintTop_toBottomOf="@+id/distanceToPin" />
 
+    <LinearLayout
+        android:id="@+id/longDriveControls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/play_overlay_background"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="4dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/courseName"
+        app:layout_constraintTop_toBottomOf="@+id/suggestedClub">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/longDriveButton"
+            style="@style/GolfPS.GoldButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:minHeight="40dp"
+            android:text="@string/play_long_drive" />
+
+        <TextView
+            android:id="@+id/myDriveLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:text="285 yds" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/markDriveButton"
+            style="@style/GolfPS.PrimaryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:minHeight="40dp"
+            android:text="@string/play_mark_drive" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/clearDriveButton"
+            style="@style/GolfPS.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:minHeight="40dp"
+            android:text="@string/play_clear_drive"
+            android:visibility="gone" />
+    </LinearLayout>
+
     <ImageButton
         android:id="@+id/closeButton"
         android:layout_width="32dp"

@@ -80,4 +80,14 @@
     <string name="add_course_request_message">This will send a course request. New course details are usually added after review.</string>
     <string name="play_previous">Prev</string>
     <string name="play_next">Next</string>
+    <string name="play_long_drive">Long Drive</string>
+    <string name="play_mark_drive">Mark</string>
+    <string name="play_clear_drive">Clear</string>
+    <string name="play_add_drive_title">Add Long Drive Here?</string>
+    <string name="play_add_drive_message">Your drive will be added to this hole and may be used in future long-drive competitions.</string>
+    <string name="play_add_drive_yes">Yes</string>
+    <string name="play_add_drive_no">No</string>
+    <string name="play_drive_too_far">That location is more than 500 yards from the tee, so the drive was not saved.</string>
+    <string name="play_drive_location_unavailable">Your current location is not available yet.</string>
+    <string name="play_drive_save_failed">Unable to save your long drive.</string>
 </resources>

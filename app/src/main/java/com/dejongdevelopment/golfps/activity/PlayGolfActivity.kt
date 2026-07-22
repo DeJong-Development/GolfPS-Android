@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.app.AlertDialog
 import android.os.*
 import android.util.Log
 import android.view.View
@@ -20,6 +21,8 @@ import com.dejongdevelopment.golfps.GolfApplication
 import com.dejongdevelopment.golfps.databinding.ActivityPlayGolfBinding
 import com.dejongdevelopment.golfps.models.Hole
 import com.dejongdevelopment.golfps.tools.MapTools
+import com.dejongdevelopment.golfps.tools.AnalyticsLogger
+import com.dejongdevelopment.golfps.tools.CourseTools
 import com.dejongdevelopment.golfps.util.latLng
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
@@ -29,6 +32,7 @@ import com.dejongdevelopment.golfps.models.Club
 import com.dejongdevelopment.golfps.models.Course
 import com.dejongdevelopment.golfps.util.distance
 import com.dejongdevelopment.golfps.util.geopoint
+import com.dejongdevelopment.golfps.util.toYards
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.GoogleMap.*
 import com.google.android.gms.wearable.DataItem
@@ -37,6 +41,10 @@ import com.google.android.gms.wearable.PutDataRequest
 import com.google.android.gms.wearable.Wearable
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.SetOptions
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import kotlin.math.min
 
 class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
@@ -56,6 +64,9 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
     private var currentTeeMarker: Marker? = null
     private var currentBunkerMarkers:MutableList<Marker> = mutableListOf()
     private var currentDistanceMarker:Marker? = null
+    private var myDrivingDistanceMarker: Marker? = null
+    private var currentLongDriveMarkers: MutableList<Marker> = mutableListOf()
+    private var longDriveControlsExpanded = false
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
@@ -178,6 +189,19 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
         binding.previousButton.setOnClickListener {
             vibrate()
             goToHole(increment = -1)
+        }
+        binding.longDriveButton.setOnClickListener {
+            AnalyticsLogger.log("click_long_drive")
+            longDriveControlsExpanded = !longDriveControlsExpanded
+            updateLongDriveControls()
+        }
+        binding.markDriveButton.setOnClickListener {
+            AnalyticsLogger.log("click_long_drive_mark")
+            addDrivePrompt()
+        }
+        binding.clearDriveButton.setOnClickListener {
+            AnalyticsLogger.log("click_long_drive_clear")
+            clearMyLongDrive()
         }
     }
 
@@ -366,9 +390,27 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
 
         currentHole = nextHole
 
+        longDriveControlsExpanded = false
+
         updatePinMarker()
         updateTeeMarker()
         updateBunkerMarkers()
+
+        if (nextHole.isLongDrive) {
+            CourseTools.getLongestDrives(nextHole) { success, exception ->
+                if (success && currentHole === nextHole) {
+                    runOnUiThread {
+                        updateLongDriveMarkers()
+                        updateLongDriveControls()
+                    }
+                } else if (exception != null) {
+                    Log.d("LONG_DRIVE", exception.localizedMessage ?: "Error getting long drives")
+                }
+            }
+        } else {
+            updateLongDriveMarkers()
+        }
+        updateLongDriveControls()
 
         updateDistances()
 
@@ -409,6 +451,129 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
         } else {
             myMarker.position = meLocation
         }
+    }
+
+    private fun updateLongDriveControls() {
+        val hole = currentHole
+        if (hole?.isLongDrive != true) {
+            binding.longDriveControls.visibility = View.GONE
+            return
+        }
+
+        binding.longDriveControls.visibility = View.VISIBLE
+        val driveDistance = if (GolfApplication.metric) {
+            hole.myLongestDriveInMeters
+        } else {
+            hole.myLongestDriveInYards
+        }
+        val hasDrive = driveDistance != null
+
+        binding.myDriveLabel.text = driveDistance?.distance ?: ""
+        binding.myDriveLabel.visibility = if (hasDrive && longDriveControlsExpanded) View.VISIBLE else View.GONE
+        binding.markDriveButton.visibility = if (!hasDrive && longDriveControlsExpanded) View.VISIBLE else View.GONE
+        binding.clearDriveButton.visibility = if (hasDrive && longDriveControlsExpanded) View.VISIBLE else View.GONE
+    }
+
+    private fun updateLongDriveMarkers() {
+        currentLongDriveMarkers.forEach { it.remove() }
+        currentLongDriveMarkers.clear()
+        myDrivingDistanceMarker?.remove()
+        myDrivingDistanceMarker = null
+
+        val hole = currentHole ?: return
+        val teeLocation = hole.teeLocations.firstOrNull() ?: return
+        hole.longestDrives.forEach { (playerId, driveLocation) ->
+            val isMine = playerId == GolfApplication.me.id
+            val distanceToTee = MapTools.distanceFrom(teeLocation, driveLocation)
+            val marker = map.addMarker(
+                MarkerOptions()
+                    .position(driveLocation.latLng)
+                    .title(if (isMine) "My Drive" else "Long Drive")
+                    .snippet(distanceToTee.distance)
+                    .icon(getMapIcon(R.drawable.golf_ball_blank, if (isMine) 45 else 35))
+            ) ?: return@forEach
+            marker.tag = "Drive"
+
+            if (isMine) {
+                myDrivingDistanceMarker = marker
+            } else {
+                currentLongDriveMarkers.add(marker)
+            }
+        }
+    }
+
+    private fun addDrivePrompt() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.play_add_drive_title)
+            .setMessage(R.string.play_add_drive_message)
+            .setPositiveButton(R.string.play_add_drive_yes) { _, _ -> addLongDriveAtCurrentLocation() }
+            .setNegativeButton(R.string.play_add_drive_no, null)
+            .show()
+    }
+
+    private fun addLongDriveAtCurrentLocation() {
+        val hole = currentHole ?: return
+        val location = GolfApplication.me.geoPoint
+        val teeLocation = hole.teeLocations.firstOrNull()
+        if (location == null || teeLocation == null) {
+            Toast.makeText(this, R.string.play_drive_location_unavailable, Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val distanceToTee = MapTools.distanceFrom(teeLocation, location)
+        val distanceInYards = if (GolfApplication.metric) distanceToTee.toYards() else distanceToTee
+        if (distanceInYards > 500) {
+            Toast.makeText(this, R.string.play_drive_too_far, Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val driveDocument = hole.docReference?.collection("drives")?.document(GolfApplication.me.id)
+        if (driveDocument == null) {
+            Toast.makeText(this, R.string.play_drive_save_failed, Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+        val driveData = mapOf(
+            "location" to location,
+            "distance" to distanceInYards,
+            "date" to formatter.format(Date())
+        )
+        driveDocument.set(driveData)
+            .addOnSuccessListener {
+                hole.setLongestDrive(distanceToTee)
+                hole.longestDrives[GolfApplication.me.id] = location
+                GolfApplication.me.didLogLongDrive = true
+                longDriveControlsExpanded = true
+                updateLongDriveMarkers()
+                updateLongDriveControls()
+                myDrivingDistanceMarker?.showInfoWindow()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, R.string.play_drive_save_failed, Toast.LENGTH_LONG).show()
+                Log.d("LONG_DRIVE", it.localizedMessage ?: "Error saving long drive")
+            }
+    }
+
+    private fun clearMyLongDrive() {
+        val hole = currentHole ?: return
+        val driveDocument = hole.docReference?.collection("drives")?.document(GolfApplication.me.id)
+            ?: return
+        driveDocument.delete()
+            .addOnSuccessListener {
+                hole.setLongestDrive(null)
+                hole.longestDrives.remove(GolfApplication.me.id)
+                myDrivingDistanceMarker?.remove()
+                myDrivingDistanceMarker = null
+                longDriveControlsExpanded = true
+                updateLongDriveControls()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, R.string.play_drive_save_failed, Toast.LENGTH_LONG).show()
+                Log.d("LONG_DRIVE", it.localizedMessage ?: "Error clearing long drive")
+            }
     }
 
     private fun updateBunkerMarkers() {
