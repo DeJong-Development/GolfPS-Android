@@ -441,7 +441,9 @@ class CourseSelectFragment: Fragment() {
         GolfApplication.course = course
 
         context?.apply {
-            val intent = Intent(this, PlayGolfActivity::class.java)
+            val intent = Intent(this, PlayGolfActivity::class.java).apply {
+                putExtra(PlayGolfActivity.EXTRA_CUPHOLDER_MODE, GolfApplication.cupholderMode)
+            }
             ContextCompat.startActivity(this, intent, null)
         }
     }

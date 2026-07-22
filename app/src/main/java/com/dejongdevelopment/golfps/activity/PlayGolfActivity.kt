@@ -19,7 +19,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnLayout
 import androidx.core.view.size
 import androidx.fragment.app.FragmentActivity
-import androidx.constraintlayout.widget.ConstraintSet
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.dejongdevelopment.golfps.BuildConfig
 import com.dejongdevelopment.golfps.GolfApplication
 import com.dejongdevelopment.golfps.databinding.ActivityPlayGolfBinding
@@ -71,6 +71,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
     private lateinit var mapFragment: SupportMapFragment
     private lateinit var locationPermissionRequest: ActivityResultLauncher<Array<String>>
     private var mapReady:Boolean = false
+    private var cupholderMode = false
 
     private var vibe: Vibrator? = null
 
@@ -181,6 +182,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
 
         binding = ActivityPlayGolfBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        cupholderMode = intent.getBooleanExtra(EXTRA_CUPHOLDER_MODE, GolfApplication.cupholderMode)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.playRoot) { view, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -406,7 +408,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
             horizontalPadding,
             binding.mapHeader.bottom + verticalPadding,
             horizontalPadding,
-            if (GolfApplication.cupholderMode) {
+            if (cupholderMode) {
                 verticalPadding
             } else {
                 binding.playRoot.height - binding.holeControls.top + verticalPadding
@@ -415,32 +417,32 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
     }
 
     private fun applyDisplayMode() {
-        val constraints = ConstraintSet().apply { clone(binding.playRoot) }
-        val controlsId = binding.holeControls.id
-        val headerId = binding.mapHeader.id
-        val closeId = binding.closeButton.id
         val margin = (12 * resources.displayMetrics.density).toInt()
         val compactMargin = (8 * resources.displayMetrics.density).toInt()
 
-        if (GolfApplication.cupholderMode) {
-            constraints.clear(controlsId, ConstraintSet.BOTTOM)
-            constraints.connect(controlsId, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, margin)
-
-            constraints.clear(headerId, ConstraintSet.TOP)
-            constraints.connect(headerId, ConstraintSet.TOP, controlsId, ConstraintSet.BOTTOM, compactMargin)
-            constraints.clear(closeId, ConstraintSet.TOP)
-            constraints.connect(closeId, ConstraintSet.TOP, controlsId, ConstraintSet.BOTTOM, compactMargin)
-        } else {
-            constraints.clear(controlsId, ConstraintSet.TOP)
-            constraints.connect(controlsId, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, margin)
-
-            constraints.clear(headerId, ConstraintSet.TOP)
-            constraints.connect(headerId, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, margin)
-            constraints.clear(closeId, ConstraintSet.TOP)
-            constraints.connect(closeId, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, margin)
+        (binding.holeControls.layoutParams as ConstraintLayout.LayoutParams).apply {
+            topToTop = if (cupholderMode) ConstraintLayout.LayoutParams.PARENT_ID else ConstraintLayout.LayoutParams.UNSET
+            bottomToBottom = if (cupholderMode) ConstraintLayout.LayoutParams.UNSET else ConstraintLayout.LayoutParams.PARENT_ID
+            topMargin = if (cupholderMode) 0 else margin
+            bottomMargin = if (cupholderMode) margin else margin
+            binding.holeControls.layoutParams = this
         }
 
-        constraints.applyTo(binding.playRoot)
+        (binding.mapHeader.layoutParams as ConstraintLayout.LayoutParams).apply {
+            topToTop = if (cupholderMode) ConstraintLayout.LayoutParams.UNSET else ConstraintLayout.LayoutParams.PARENT_ID
+            topToBottom = if (cupholderMode) binding.holeControls.id else ConstraintLayout.LayoutParams.UNSET
+            topMargin = if (cupholderMode) compactMargin else margin
+            binding.mapHeader.layoutParams = this
+        }
+
+        (binding.closeButton.layoutParams as ConstraintLayout.LayoutParams).apply {
+            topToTop = if (cupholderMode) ConstraintLayout.LayoutParams.UNSET else ConstraintLayout.LayoutParams.PARENT_ID
+            topToBottom = if (cupholderMode) binding.holeControls.id else ConstraintLayout.LayoutParams.UNSET
+            topMargin = if (cupholderMode) compactMargin else margin
+            binding.closeButton.layoutParams = this
+        }
+
+        binding.holeControls.requestLayout()
         binding.playRoot.doOnLayout { updateMapContentPadding() }
     }
 
@@ -581,6 +583,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
     }
 
     companion object {
+        const val EXTRA_CUPHOLDER_MODE = "cupholder_mode"
         private const val ONE_MINUTE_MS = 60_000L
         private const val FOUR_HOURS_MS = 4 * 60 * 60 * 1000L
     }
