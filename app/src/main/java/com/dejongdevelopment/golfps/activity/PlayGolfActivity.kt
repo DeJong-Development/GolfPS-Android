@@ -106,6 +106,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
 
         val course: Course = GolfApplication.course ?: return
         binding.courseName.text = course.name
+        showAmbassadorMessageIfNeeded(course)
 
         if (course.holes.isNotEmpty() && this.mapReady) {
             goToHole()
@@ -262,7 +263,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
             override fun onMarkerDragStart(marker: Marker) {
                 vibrate()
 
-                isDraggingDistanceMarker = true
+                isDraggingDistanceMarker = marker == currentDistanceMarker
                 marker.showInfoWindow()
             }
             override fun onMarkerDrag(marker: Marker) {
@@ -272,6 +273,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
             }
             override fun onMarkerDragEnd(marker: Marker) {
                 isDraggingDistanceMarker = false
+                saveAmbassadorMarkerMove(marker)
             }
         })
 
@@ -366,6 +368,52 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
                 course.didPlayHere = true
             }
         }
+    }
+
+    private fun showAmbassadorMessageIfNeeded(course: Course) {
+        if (!GolfApplication.me.isAmbassadorOf(course) || GolfApplication.me.didSeeAmbassadorMessage) return
+
+        AlertDialog.Builder(this)
+            .setIcon(R.drawable.ambassador)
+            .setTitle(R.string.play_ambassador_title)
+            .setMessage(R.string.play_ambassador_message)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                GolfApplication.me.didSeeAmbassadorMessage = true
+            }
+            .show()
+    }
+
+    private fun saveAmbassadorMarkerMove(marker: Marker) {
+        val course = GolfApplication.course ?: return
+        if (!GolfApplication.me.isAmbassadorOf(course)) return
+        val hole = currentHole ?: return
+
+        val successfulMove = when {
+            marker == currentTeeMarker -> hole.saveNewTeeLocation(marker.position.geopoint)
+            marker == currentPinMarker -> hole.saveNewPinLocation(marker.position.geopoint)
+            currentBunkerMarkers.contains(marker) -> hole.saveNewBunkerLocations(
+                currentBunkerMarkers.map { it.position.geopoint }
+            )
+            else -> return
+        }
+
+        if (!successfulMove) {
+            updateTeeMarker()
+            updatePinMarker()
+            updateBunkerMarkers()
+            AlertDialog.Builder(this)
+                .setTitle(R.string.play_ambassador_move_error_title)
+                .setMessage(R.string.play_ambassador_move_error_message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show()
+            return
+        }
+
+        GolfApplication.me.didModifyAmbassadorCourse = true
+        updateTeeMarker()
+        updatePinMarker()
+        updateBunkerMarkers()
+        updateDistances()
     }
 
     private fun goToHole(increment: Int = 0) {
@@ -592,6 +640,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
                 .title("Hazard")
                 .snippet(distanceToBunker.distance)
                 .icon(getMapIcon(R.drawable.hazard_marker))
+                .draggable(GolfApplication.course?.let { GolfApplication.me.isAmbassadorOf(it) } == true)
             map.addMarker(markerOptions)?.let { marker ->
                 marker.setTag("$holeNumber:T$bunkerIndex")
                 currentBunkerMarkers.add(marker)
@@ -610,12 +659,14 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
                 .position(teePoint.latLng)
                 .title("Tee #${holeNumber}")
                 .icon(getMapIcon(R.drawable.tee_marker))
+                .draggable(GolfApplication.course?.let { GolfApplication.me.isAmbassadorOf(it) } == true)
             currentTeeMarker = map.addMarker(markerOptions)
             currentTeeMarker!!.tag = "$holeNumber:T"
         } else {
             teeMarker.position = teePoint.latLng
             teeMarker.title = "Tee #$holeNumber"
             teeMarker.tag = "$holeNumber:T"
+            teeMarker.isDraggable = GolfApplication.course?.let { GolfApplication.me.isAmbassadorOf(it) } == true
         }
     }
 
@@ -631,6 +682,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
                 .title("Pin #${holeNumber}")
                 .snippet("$distanceToPin yds")
                 .icon(getMapIcon(R.drawable.flag_marker))
+                .draggable(GolfApplication.course?.let { GolfApplication.me.isAmbassadorOf(it) } == true)
             currentPinMarker = map.addMarker(markerOptions)
             currentPinMarker!!.tag = "$holeNumber:P"
         } else {
@@ -638,6 +690,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
             pinMarker.title = "Pin #$holeNumber"
             pinMarker.snippet = "$distanceToPin yds"
             pinMarker.tag = "$holeNumber:P"
+            pinMarker.isDraggable = GolfApplication.course?.let { GolfApplication.me.isAmbassadorOf(it) } == true
         }
 
 //        new GetElevationTask().execute(currentPinLatLng);

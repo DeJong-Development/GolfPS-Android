@@ -214,11 +214,12 @@ Wave 0 color work:
   - add Android pull-to-refresh for course reloads, matching iOS `UIRefreshControl`
   - relax fixed-height text rows that were clipping after the design pass
 - Port missing high-value behavior:
-  - ambassador state and message
+  - [x] ambassador state and message
   - [x] long-drive controls
   - [x] drive mark/clear behavior
   - [x] selected club and distance behavior
-  - marker tools and map updates
+  - [x] ambassador marker editing and map updates
+  - other-player markers and map updates
   - Wear OS updates equivalent to iOS watch updates where applicable
 
 Wind and elevation adjustments are intentionally deferred until both platforms are

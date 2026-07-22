@@ -90,4 +90,8 @@
     <string name="play_drive_too_far">That location is more than 500 yards from the tee, so the drive was not saved.</string>
     <string name="play_drive_location_unavailable">Your current location is not available yet.</string>
     <string name="play_drive_save_failed">Unable to save your long drive.</string>
+    <string name="play_ambassador_title">You’re the Ambassador!</string>
+    <string name="play_ambassador_message">You are the ambassador of this course. Courses can change over time, and you can update tee, pin, and hazard positions for other golfers.\n\nPress and drag a course marker to its correct location.</string>
+    <string name="play_ambassador_move_error_title">Move Error</string>
+    <string name="play_ambassador_move_error_message">That marker was moved an unreasonable distance from the hole. The change was not saved.\n\nWith great power comes great responsibility. Please keep course markers accurate.</string>
 </resources>

@@ -6,6 +6,8 @@ import com.dejongdevelopment.golfps.util.latLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.SetOptions
 
 class Hole(number: Int, data: MutableMap<String, Any>) {
 
@@ -95,5 +97,54 @@ class Hole(number: Int, data: MutableMap<String, Any>) {
             myLongestDriveInMeters = (distance.toDouble() / 1.09361).toInt()
             myLongestDriveInYards = distance
         }
+    }
+
+    fun saveNewTeeLocation(location: GeoPoint): Boolean {
+        if (MapTools.distanceFrom(location, pinLocation) > 800) return false
+        val reference = docReference ?: return false
+
+        reference.set(
+            mapOf(
+                "tee" to listOf(location),
+                "updateTime" to Timestamp.now(),
+                "updatedBy" to GolfApplication.me.id
+            ),
+            SetOptions.merge()
+        )
+        teeLocations = listOf(location)
+        return true
+    }
+
+    fun saveNewPinLocation(location: GeoPoint): Boolean {
+        val teeLocation = teeLocations.firstOrNull() ?: return false
+        if (MapTools.distanceFrom(location, teeLocation) > 800) return false
+        val reference = docReference ?: return false
+
+        reference.set(
+            mapOf(
+                "pin" to location,
+                "updateTime" to Timestamp.now(),
+                "updatedBy" to GolfApplication.me.id
+            ),
+            SetOptions.merge()
+        )
+        pinLocation = location
+        return true
+    }
+
+    fun saveNewBunkerLocations(locations: List<GeoPoint>): Boolean {
+        if (locations.any { MapTools.distanceFrom(it, pinLocation) > 800 }) return false
+        val reference = docReference ?: return false
+
+        reference.set(
+            mapOf(
+                "bunkers" to locations,
+                "updateTime" to Timestamp.now(),
+                "updatedBy" to GolfApplication.me.id
+            ),
+            SetOptions.merge()
+        )
+        bunkerLocations = locations
+        return true
     }
 }
