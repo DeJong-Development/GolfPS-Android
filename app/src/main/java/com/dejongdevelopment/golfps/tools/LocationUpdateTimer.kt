@@ -14,7 +14,9 @@ class LocationUpdateTimer {
     var delegate: LocationUpdateTimerDelegate? = null
 
     fun startNewTimer(interval: Double, triggerImmediately: Boolean = true) {
+        val currentDelegate = delegate
         invalidate()
+        delegate = currentDelegate
 
         val intervalMs = (interval * 1000).toLong()
         val runnable = object : Runnable {

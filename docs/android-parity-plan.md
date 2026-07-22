@@ -219,7 +219,10 @@ Wave 0 color work:
   - [x] drive mark/clear behavior
   - [x] selected club and distance behavior
   - [x] ambassador marker editing and map updates
-  - other-player markers and map updates
+  - [x] privacy-gated player location publishing
+  - [x] course-scoped other-player markers and map updates
+  - [x] stale-player filtering and spectator fallback
+  - [x] remote avatar marker loading with standard marker fallback
   - Wear OS updates equivalent to iOS watch updates where applicable
 
 Wind and elevation adjustments are intentionally deferred until both platforms are

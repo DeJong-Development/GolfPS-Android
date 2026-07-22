@@ -14,7 +14,9 @@ class PlayerUpdateTimer {
     var delegate: PlayerUpdateTimerDelegate? = null
 
     fun startNewTimer(interval: Double, triggerImmediately: Boolean = false) {
+        val currentDelegate = delegate
         invalidate()
+        delegate = currentDelegate
 
         val intervalMs = (interval * 1000).toLong()
         val runnable = object : Runnable {

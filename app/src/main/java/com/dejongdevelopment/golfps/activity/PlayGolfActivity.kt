@@ -23,6 +23,10 @@ import com.dejongdevelopment.golfps.models.Hole
 import com.dejongdevelopment.golfps.tools.MapTools
 import com.dejongdevelopment.golfps.tools.AnalyticsLogger
 import com.dejongdevelopment.golfps.tools.CourseTools
+import com.dejongdevelopment.golfps.tools.LocationUpdateTimer
+import com.dejongdevelopment.golfps.tools.LocationUpdateTimerDelegate
+import com.dejongdevelopment.golfps.tools.PlayerUpdateTimer
+import com.dejongdevelopment.golfps.tools.PlayerUpdateTimerDelegate
 import com.dejongdevelopment.golfps.util.latLng
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
@@ -30,6 +34,7 @@ import com.google.firebase.firestore.GeoPoint
 import com.dejongdevelopment.golfps.R
 import com.dejongdevelopment.golfps.models.Club
 import com.dejongdevelopment.golfps.models.Course
+import com.dejongdevelopment.golfps.models.Player
 import com.dejongdevelopment.golfps.util.distance
 import com.dejongdevelopment.golfps.util.geopoint
 import com.dejongdevelopment.golfps.util.toYards
@@ -41,13 +46,21 @@ import com.google.android.gms.wearable.PutDataRequest
 import com.google.android.gms.wearable.Wearable
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
+import android.graphics.drawable.Drawable
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import kotlin.math.min
 
-class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
+class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
+    LocationUpdateTimerDelegate, PlayerUpdateTimerDelegate {
 
     private lateinit var binding: ActivityPlayGolfBinding
     private lateinit var map: GoogleMap
@@ -67,6 +80,13 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
     private var myDrivingDistanceMarker: Marker? = null
     private var currentLongDriveMarkers: MutableList<Marker> = mutableListOf()
     private var longDriveControlsExpanded = false
+
+    private val locationUpdateTimer = LocationUpdateTimer()
+    private val playerUpdateTimer = PlayerUpdateTimer()
+    private var playerListener: ListenerRegistration? = null
+    private var previousPublishedLocation: GeoPoint? = null
+    private var otherPlayers: List<Player> = listOf()
+    private val otherPlayerMarkers = mutableMapOf<String, Marker>()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
@@ -111,6 +131,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
         if (course.holes.isNotEmpty() && this.mapReady) {
             goToHole()
         }
+        if (mapReady) startLivePlayerUpdates(course)
 
         course.addHoles { success, exception ->
             if (exception != null) {
@@ -141,6 +162,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
     override fun onPause() {
         super.onPause()
         stopLocationUpdates()
+        stopLivePlayerUpdates()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -279,6 +301,8 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
 
         this.mapReady = true
 
+        GolfApplication.course?.let { startLivePlayerUpdates(it) }
+
         val courseHoles = GolfApplication.course?.holes ?: return
         if (courseHoles.isNotEmpty()) {
             goToHole()
@@ -344,6 +368,138 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback {
     }
     private fun stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
+    private fun startLivePlayerUpdates(course: Course) {
+        stopLivePlayerUpdates(removeMarkers = false)
+        previousPublishedLocation = null
+
+        locationUpdateTimer.delegate = this
+        locationUpdateTimer.startNewTimer(interval = 5.0)
+        playerUpdateTimer.delegate = this
+        playerUpdateTimer.startNewTimer(interval = 30.0)
+
+        playerListener = Firebase.firestore.collection("players")
+            .whereEqualTo("course", course.id)
+            .addSnapshotListener { snapshot, exception ->
+                if (exception != null) {
+                    Log.d("PLAYERS", exception.localizedMessage ?: "Error fetching player locations")
+                    return@addSnapshotListener
+                }
+
+                val cutoff = System.currentTimeMillis() - FOUR_HOURS_MS
+                otherPlayers = snapshot?.documents.orEmpty().mapNotNull { document ->
+                    if (document.id == GolfApplication.me.id) return@mapNotNull null
+                    val data = document.data ?: return@mapNotNull null
+                    Player(document.id, data).takeIf { player ->
+                        (player.lastLocationUpdate?.time ?: 0L) > cutoff
+                    }
+                }
+                updatePlayersNow()
+            }
+    }
+
+    private fun stopLivePlayerUpdates(removeMarkers: Boolean = true) {
+        locationUpdateTimer.invalidate()
+        playerUpdateTimer.invalidate()
+        playerListener?.remove()
+        playerListener = null
+        otherPlayers = listOf()
+        if (removeMarkers) {
+            otherPlayerMarkers.values.forEach { it.remove() }
+            otherPlayerMarkers.clear()
+        }
+    }
+
+    override fun updateLocationsNow() {
+        if (!GolfApplication.me.shareLocation) return
+        val course = GolfApplication.course ?: return
+        val location = GolfApplication.me.geoPoint ?: return
+        val previous = previousPublishedLocation
+        if (previous != null && MapTools.distanceFrom(previous, location) < 25) return
+
+        previousPublishedLocation = location
+        GolfApplication.me.docReference?.set(
+            mapOf(
+                "course" to course.id,
+                "location" to location,
+                "updateTime" to Timestamp.now()
+            ),
+            SetOptions.merge()
+        )?.addOnFailureListener {
+            Log.d("PLAYERS", it.localizedMessage ?: "Error publishing player location")
+        }
+    }
+
+    override fun updatePlayersNow() {
+        if (!mapReady) return
+        val course = GolfApplication.course ?: return
+        val validPlayerIds = otherPlayers.map { it.id }.toSet()
+
+        otherPlayerMarkers.keys.filterNot { validPlayerIds.contains(it) }.forEach { playerId ->
+            otherPlayerMarkers.remove(playerId)?.remove()
+        }
+
+        otherPlayers.forEach { player ->
+            val markerLocation = playerMarkerLocation(player, course) ?: return@forEach
+            val isSpectator = player.geoPoint == null ||
+                (course.holes.isNotEmpty() && !course.bounds.contains(player.geoPoint!!.latLng))
+            val marker = otherPlayerMarkers[player.id] ?: map.addMarker(
+                MarkerOptions()
+                    .position(markerLocation)
+                    .title(if (isSpectator) "Spectator" else "Golfer")
+                    .icon(getMapIcon(R.drawable.player_marker, 75))
+            )?.also {
+                it.tag = "player:${player.id}"
+                otherPlayerMarkers[player.id] = it
+            } ?: return@forEach
+
+            marker.position = markerLocation
+            marker.title = if (isSpectator) "Spectator" else "Golfer"
+            val age = System.currentTimeMillis() - (player.lastLocationUpdate?.time ?: 0L)
+            marker.alpha = if (age > ONE_MINUTE_MS) 0.75f else 1f
+            player.avatarURL?.let { loadPlayerAvatar(player.id, it.toString()) }
+        }
+    }
+
+    private fun playerMarkerLocation(player: Player, course: Course): LatLng? {
+        val playerLocation = player.geoPoint?.latLng
+        if (playerLocation != null &&
+            (course.holes.isEmpty() || course.bounds.contains(playerLocation))) return playerLocation
+        val spectation = course.spectation ?: return playerLocation
+
+        val offsetSeed = player.id.hashCode()
+        val latitudeOffset = ((offsetSeed and 0xff) / 255.0 - 0.5) * 0.00002
+        val longitudeOffset = (((offsetSeed shr 8) and 0xff) / 255.0 - 0.5) * 0.00002
+        return LatLng(
+            spectation.latitude + latitudeOffset,
+            spectation.longitude + longitudeOffset
+        )
+    }
+
+    private fun loadPlayerAvatar(playerId: String, avatarUrl: String) {
+        val marker = otherPlayerMarkers[playerId] ?: return
+        if (marker.tag == "player-avatar:$avatarUrl") return
+        marker.tag = "player-avatar:$avatarUrl"
+
+        Glide.with(this)
+            .asBitmap()
+            .load(avatarUrl)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    val currentMarker = otherPlayerMarkers[playerId] ?: return
+                    if (currentMarker.tag != "player-avatar:$avatarUrl") return
+                    val scaled = Bitmap.createScaledBitmap(resource, 75, 75, false)
+                    currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(scaled))
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) = Unit
+            })
+    }
+
+    companion object {
+        private const val ONE_MINUTE_MS = 60_000L
+        private const val FOUR_HOURS_MS = 4 * 60 * 60 * 1000L
     }
 
     private fun vibrate() {
