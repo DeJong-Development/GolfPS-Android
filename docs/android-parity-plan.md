@@ -243,6 +243,7 @@ identified and an explicit cross-platform fix is approved.
 - [x] iOS-aligned lightweight course/yardage overlay
 - [x] cupholder mode is passed as an explicit course-launch mode and pins hole navigation to the top safe edge
 - [x] durable bag ID storage with legacy-key migration and complete mutation persistence
+- [x] register `GolfApplication` so SharedPreferences-backed bag and display settings initialize at process launch
 
 ## Wave 4: Social And Achievement Parity
 
