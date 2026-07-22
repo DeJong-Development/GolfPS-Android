@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.GolfPS.Wear" parent="android:style/Theme.DeviceDefault">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowBackground">#000000</item>
+        <item name="android:colorAccent">#C3A767</item>
+        <item name="android:navigationBarColor">#000000</item>
+    </style>
+</resources>

@@ -27,6 +27,9 @@ import com.dejongdevelopment.golfps.tools.LocationUpdateTimer
 import com.dejongdevelopment.golfps.tools.LocationUpdateTimerDelegate
 import com.dejongdevelopment.golfps.tools.PlayerUpdateTimer
 import com.dejongdevelopment.golfps.tools.PlayerUpdateTimerDelegate
+import com.dejongdevelopment.golfps.tools.WearCommandDelegate
+import com.dejongdevelopment.golfps.tools.WearGolfState
+import com.dejongdevelopment.golfps.tools.WearTools
 import com.dejongdevelopment.golfps.util.latLng
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
@@ -40,10 +43,6 @@ import com.dejongdevelopment.golfps.util.geopoint
 import com.dejongdevelopment.golfps.util.toYards
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.GoogleMap.*
-import com.google.android.gms.wearable.DataItem
-import com.google.android.gms.wearable.PutDataMapRequest
-import com.google.android.gms.wearable.PutDataRequest
-import com.google.android.gms.wearable.Wearable
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ListenerRegistration
@@ -60,7 +59,7 @@ import java.util.TimeZone
 import kotlin.math.min
 
 class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
-    LocationUpdateTimerDelegate, PlayerUpdateTimerDelegate {
+    LocationUpdateTimerDelegate, PlayerUpdateTimerDelegate, WearCommandDelegate {
 
     private lateinit var binding: ActivityPlayGolfBinding
     private lateinit var map: GoogleMap
@@ -132,6 +131,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
             goToHole()
         }
         if (mapReady) startLivePlayerUpdates(course)
+        WearTools.start(this, this)
 
         course.addHoles { success, exception ->
             if (exception != null) {
@@ -163,6 +163,8 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
         super.onPause()
         stopLocationUpdates()
         stopLivePlayerUpdates()
+        if (isFinishing) WearTools.clear(this)
+        WearTools.stop()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -876,6 +878,38 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
         val distance = distanceToMeFromPin ?: currentHole?.distanceToPinFromTee ?: return
         binding.distanceToPin.text = distance.distance
         binding.suggestedClub.text = GolfApplication.me.bag.getClubSuggestion(distance)?.name ?: "-"
+        updateWearState(distance)
+    }
+
+    private fun updateWearState(distance: Int) {
+        val course = GolfApplication.course ?: return
+        val hole = currentHole ?: return
+        val club = GolfApplication.me.bag.getClubSuggestion(distance)?.name ?: ""
+        WearTools.update(
+            this,
+            WearGolfState(
+                courseId = course.id,
+                courseName = course.name,
+                hole = hole.number,
+                distance = distance,
+                units = if (GolfApplication.metric) "m" else "yds",
+                club = club
+            )
+        )
+    }
+
+    override fun goToNextHoleFromWear() {
+        runOnUiThread {
+            vibrate()
+            goToHole(increment = 1)
+        }
+    }
+
+    override fun goToPreviousHoleFromWear() {
+        runOnUiThread {
+            vibrate()
+            goToHole(increment = -1)
+        }
     }
 
     private val distanceToMeFromTee:Int?

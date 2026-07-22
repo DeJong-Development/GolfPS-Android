@@ -11,3 +11,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "GolfPS"
 include ':app'
+include ':wear'

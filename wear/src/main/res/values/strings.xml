@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GolfPS</string>
+    <string name="waiting_for_round">Start a round on your phone</string>
+    <string name="previous_hole">Previous hole</string>
+    <string name="next_hole">Next hole</string>
+</resources>

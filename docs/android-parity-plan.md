@@ -223,7 +223,9 @@ Wave 0 color work:
   - [x] course-scoped other-player markers and map updates
   - [x] stale-player filtering and spectator fallback
   - [x] remote avatar marker loading with standard marker fallback
-  - Wear OS updates equivalent to iOS watch updates where applicable
+  - [x] phone-side Wear OS state updates for course, hole, distance, units, and club
+  - [x] Wear OS next/previous hole command handling
+  - [x] Wear OS companion module with on-watch presentation and hole controls
 
 Wind and elevation adjustments are intentionally deferred until both platforms are
 ready for a coordinated polish pass. iOS remains unchanged unless a shared bug is
