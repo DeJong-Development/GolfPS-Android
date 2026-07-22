@@ -74,7 +74,7 @@
         android:id="@+id/cell_course_state_icon"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:tint="@color/grass"
+        app:tint="@color/grass"
         app:layout_constraintBottom_toBottomOf="@+id/courseTextGroup"
         app:layout_constraintEnd_toStartOf="@+id/cell_course_state"
         app:layout_constraintTop_toTopOf="@+id/courseTextGroup"

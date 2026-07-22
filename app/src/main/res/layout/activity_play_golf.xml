@@ -2,203 +2,222 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/playRoot"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background">
+    android:layout_height="match_parent">
 
     <FrameLayout
         android:id="@+id/content_frame"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_above="@+id/previousButton"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/background"
-        app:layout_constraintBottom_toTopOf="@+id/previousButton"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </FrameLayout>
-
-    <TextView
-        android:id="@+id/courseName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/play_overlay_background"
-        android:paddingLeft="10dp"
-        android:paddingTop="5dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="5dp"
-        android:text="Course Name"
-        android:textColor="@color/white"
-        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/distanceToPin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/suggestedClub"
-        android:layout_centerHorizontal="true"
-        android:shadowColor="#000000"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="1"
-        android:text="- yds"
-        android:textColor="@color/white"
-        android:textSize="45sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/courseName"
-        app:layout_constraintTop_toBottomOf="@+id/courseName" />
-
-    <TextView
-        android:id="@+id/suggestedClub"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/nextButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="-2dp"
-        android:shadowColor="#000000"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="1"
-        android:text="-"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="@+id/distanceToPin"
-        app:layout_constraintTop_toBottomOf="@+id/distanceToPin" />
-
     <LinearLayout
-        android:id="@+id/longDriveControls"
-        android:layout_width="wrap_content"
+        android:id="@+id/mapHeader"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/play_overlay_background"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="4dp"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@+id/courseName"
-        app:layout_constraintTop_toBottomOf="@+id/suggestedClub">
+        android:elevation="8dp"
+        android:gravity="center_horizontal"
+        android:maxWidth="360dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/closeButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/longDriveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:gravity="center"
-            android:paddingHorizontal="8dp"
-            android:text="@string/play_long_drive"
-            android:textColor="@color/gold"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/myDriveLabel"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/courseName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="Hickory Knoll Golf Course" />
+
+            <ImageView
+                android:id="@+id/ambassadorBadge"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:contentDescription="@string/play_ambassador_badge"
+                android:src="@drawable/ambassador"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/distanceToPin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="1"
             android:textColor="@color/white"
+            android:textSize="42sp"
             android:textStyle="bold"
-            android:visibility="gone"
+            app:autoSizeMaxTextSize="42sp"
+            app:autoSizeMinTextSize="26sp"
+            app:autoSizeStepGranularity="2sp"
+            app:autoSizeTextType="uniform"
             tools:text="285 yds" />
 
         <TextView
-            android:id="@+id/markDriveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:id="@+id/suggestedClub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:gravity="center"
-            android:paddingHorizontal="8dp"
-            android:text="@string/play_mark_drive"
-            android:textColor="@color/gold"
-            android:textStyle="bold" />
+            android:maxLines="1"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            tools:text="Driver" />
 
-        <TextView
-            android:id="@+id/clearDriveButton"
+        <LinearLayout
+            android:id="@+id/longDriveControls"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:layout_height="36dp"
+            android:layout_marginTop="4dp"
             android:gravity="center"
-            android:paddingHorizontal="8dp"
-            android:text="@string/play_clear_drive"
-            android:textColor="@color/gold"
-            android:textStyle="bold"
-            android:visibility="gone" />
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/longDriveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:paddingHorizontal="8dp"
+                android:text="@string/play_long_drive"
+                android:textColor="@color/gold"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/myDriveLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingHorizontal="6dp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="285 yds" />
+
+            <TextView
+                android:id="@+id/markDriveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:paddingHorizontal="8dp"
+                android:text="@string/play_mark_drive"
+                android:textColor="@color/gold"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/clearDriveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:paddingHorizontal="8dp"
+                android:text="@string/play_clear_drive"
+                android:textColor="@color/gold"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </LinearLayout>
     </LinearLayout>
 
     <ImageButton
         android:id="@+id/closeButton"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="20dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
         android:background="@drawable/app_surface"
-        android:gravity="center"
-        android:src="@android:drawable/arrow_down_float"
-        android:textSize="30sp"
-        android:visibility="invisible"
-        app:iconPadding="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/courseName"
+        android:contentDescription="@string/play_close"
+        android:elevation="8dp"
+        android:padding="10dp"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/courseName"
+        app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/text" />
 
-    <TextView
-        android:id="@+id/holeNumberLabel"
-        android:layout_width="wrap_content"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/holeControls"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/nextButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="8dp"
-        android:shadowColor="#000000"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="1"
-        android:text="#1"
-        android:textColor="@color/text"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="12dp"
+        app:cardBackgroundColor="@color/surface"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/content_frame" />
+        app:strokeColor="@color/border"
+        app:strokeWidth="1dp">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/previousButton"
-        style="@style/GolfPS.OutlinedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/play_previous"
-        app:icon="@android:drawable/ic_media_previous"
-        app:iconGravity="textStart"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:paddingHorizontal="6dp">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/nextButton"
-        style="@style/GolfPS.OutlinedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/play_next"
-        app:icon="@android:drawable/ic_media_next"
-        app:iconGravity="textEnd"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/previousButton"
+                style="@style/GolfPS.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:minWidth="72dp"
+                android:text="@string/play_previous"
+                app:icon="@android:drawable/ic_media_previous"
+                app:iconGravity="textStart"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/holeNumberLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/play_current_hole"
+                android:textColor="@color/text"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="#1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/nextButton"
+                style="@style/GolfPS.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:minWidth="72dp"
+                android:text="@string/play_next"
+                app:icon="@android:drawable/ic_media_next"
+                app:iconGravity="textEnd"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

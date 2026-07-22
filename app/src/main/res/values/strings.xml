@@ -80,6 +80,11 @@
     <string name="add_course_request_message">This will send a course request. New course details are usually added after review.</string>
     <string name="play_previous">Prev</string>
     <string name="play_next">Next</string>
+    <string name="play_close">Close round</string>
+    <string name="play_current_hole">Current hole</string>
+    <string name="play_hole_number">#%1$d</string>
+    <string name="play_ambassador_badge">Course ambassador</string>
+    <string name="play_distance_marker_hint">Press and hold anywhere on the map to measure a shot. Drag the ball to adjust it.</string>
     <string name="play_long_drive">Long Drive</string>
     <string name="play_mark_drive">Mark</string>
     <string name="play_clear_drive">Clear</string>

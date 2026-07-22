@@ -467,7 +467,8 @@ class CourseSelectFragment: Fragment() {
             return
         }
 
-        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, null)
+        try {
+            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, null)
             .addOnSuccessListener { location ->
                 if (location != null) {
                     GolfApplication.me.geoPoint = location.geopoint
@@ -493,6 +494,9 @@ class CourseSelectFragment: Fragment() {
                 DebugLogger.report(it, "Unable to retrieve location for nearby courses.")
                 completion(NearbyCourseResult(courses = listOf(), hasKnownLocation = false))
             }
+        } catch (_: SecurityException) {
+            completion(NearbyCourseResult(courses = listOf(), hasKnownLocation = false))
+        }
     }
 
     @Suppress("DEPRECATION")

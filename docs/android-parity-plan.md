@@ -231,6 +231,16 @@ Wind and elevation adjustments are intentionally deferred until both platforms a
 ready for a coordinated polish pass. iOS remains unchanged unless a shared bug is
 identified and an explicit cross-platform fix is approved.
 
+### Map Interaction And Visual Polish
+
+- [x] Full-bleed map with responsive, safe-area-aware overlays
+- [x] Theme-aware bottom navigation and high-contrast map header
+- [x] Scalable yardage text and constrained course names for smaller screens
+- [x] Density-independent marker sizing, anchors, and themed info windows
+- [x] Clearer distance-marker creation, dragging, dismissal, and first-use guidance
+- [x] Map camera padding that keeps hole content clear of controls
+- [x] Modern Android location and vibration APIs with legacy-device fallback
+
 ## Wave 4: Social And Achievement Parity
 
 - Add badges screens and model-backed badge display.

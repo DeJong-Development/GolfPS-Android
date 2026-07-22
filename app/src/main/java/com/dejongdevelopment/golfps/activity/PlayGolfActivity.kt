@@ -14,11 +14,15 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.ColorInt
 import androidx.core.app.ActivityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnLayout
 import androidx.core.view.size
 import androidx.fragment.app.FragmentActivity
 import com.dejongdevelopment.golfps.BuildConfig
 import com.dejongdevelopment.golfps.GolfApplication
 import com.dejongdevelopment.golfps.databinding.ActivityPlayGolfBinding
+import com.dejongdevelopment.golfps.adapters.CustomInfoWindowAdapter
 import com.dejongdevelopment.golfps.models.Hole
 import com.dejongdevelopment.golfps.tools.MapTools
 import com.dejongdevelopment.golfps.tools.AnalyticsLogger
@@ -113,9 +117,10 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
                     courseLocation == PackageManager.PERMISSION_GRANTED
         }
 
-    private fun getMapIcon(resource:Int, size:Int = 150): BitmapDescriptor? {
+    private fun getMapIcon(resource: Int, sizeDp: Int = 44): BitmapDescriptor? {
         val iconBitmap = BitmapFactory.decodeResource(resources, resource)
-        val scaledBitmap = Bitmap.createScaledBitmap(iconBitmap, size, size, false) ?: return null
+        val sizePx = (sizeDp * resources.displayMetrics.density).toInt()
+        val scaledBitmap = Bitmap.createScaledBitmap(iconBitmap, sizePx, sizePx, true) ?: return null
         return BitmapDescriptorFactory.fromBitmap(scaledBitmap)
     }
 
@@ -125,6 +130,8 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
 
         val course: Course = GolfApplication.course ?: return
         binding.courseName.text = course.name
+        binding.ambassadorBadge.visibility =
+            if (GolfApplication.me.isAmbassadorOf(course)) View.VISIBLE else View.GONE
         showAmbassadorMessageIfNeeded(course)
 
         if (course.holes.isNotEmpty() && this.mapReady) {
@@ -173,7 +180,13 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
         binding = ActivityPlayGolfBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        vibe = getSystemService(VIBRATOR_SERVICE) as Vibrator
+        ViewCompat.setOnApplyWindowInsetsListener(binding.playRoot) { view, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            insets
+        }
+
+        vibe = getSystemService(Vibrator::class.java)
 
         mapFragment = SupportMapFragment.newInstance()
         mapFragment.getMapAsync(this)
@@ -251,12 +264,20 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
         val update = CameraUpdateFactory.newCameraPosition(camera)
         this.map.mapType = MAP_TYPE_SATELLITE
         this.map.uiSettings.isCompassEnabled = false
+        this.map.uiSettings.isMapToolbarEnabled = false
+        this.map.uiSettings.isIndoorLevelPickerEnabled = false
+        this.map.uiSettings.isRotateGesturesEnabled = true
+        this.map.setInfoWindowAdapter(CustomInfoWindowAdapter(this))
         if (BuildConfig.DEBUG) {
             this.map.uiSettings.isZoomControlsEnabled = true
         }
         this.map.animateCamera(update)
 
         map.setOnMarkerClickListener { marker ->
+            if (marker == meMarker && currentHole?.isLongDrive == true) {
+                addDrivePrompt()
+                return@setOnMarkerClickListener true
+            }
             marker.showInfoWindow()
             true
         }
@@ -276,11 +297,13 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
                     MarkerOptions()
                         .position(latLng)
                         .draggable(true)
-                        .icon(getMapIcon(R.drawable.golf_ball_blank, 75))
+                        .anchor(0.5f, 0.5f)
+                        .icon(getMapIcon(R.drawable.golf_ball_blank, 30))
                 )?.also {
                     it.tag = "distance_marker"
                 }
                 updateDistanceMarker()
+                showDistanceMarkerHintIfNeeded()
             }
         }
         map.setOnMarkerDragListener(object : OnMarkerDragListener {
@@ -302,6 +325,8 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
         })
 
         this.mapReady = true
+
+        binding.playRoot.doOnLayout { updateMapContentPadding() }
 
         GolfApplication.course?.let { startLivePlayerUpdates(it) }
 
@@ -352,11 +377,10 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
         }
 
         //TODO: change priority if user device battery level is low?
-        val locationRequest = LocationRequest.create().apply {
-            interval = 10000
-            fastestInterval = 5000
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
+        val locationRequest = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            10_000L
+        ).setMinUpdateIntervalMillis(5_000L).build()
 
         try {
             fusedLocationClient.requestLocationUpdates(
@@ -370,6 +394,25 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
     }
     private fun stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
+    private fun updateMapContentPadding() {
+        if (!mapReady) return
+        val horizontalPadding = (12 * resources.displayMetrics.density).toInt()
+        val verticalPadding = (12 * resources.displayMetrics.density).toInt()
+        map.setPadding(
+            horizontalPadding,
+            binding.mapHeader.bottom + verticalPadding,
+            horizontalPadding,
+            binding.playRoot.height - binding.holeControls.top + verticalPadding
+        )
+    }
+
+    private fun showDistanceMarkerHintIfNeeded() {
+        val preferences = GolfApplication.preferences ?: return
+        if (preferences.getBoolean("play_saw_distance_marker_hint", false)) return
+        Toast.makeText(this, R.string.play_distance_marker_hint, Toast.LENGTH_LONG).show()
+        preferences.edit().putBoolean("play_saw_distance_marker_hint", true).apply()
     }
 
     private fun startLivePlayerUpdates(course: Course) {
@@ -450,7 +493,8 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
                 MarkerOptions()
                     .position(markerLocation)
                     .title(if (isSpectator) "Spectator" else "Golfer")
-                    .icon(getMapIcon(R.drawable.player_marker, 75))
+                    .anchor(0.5f, 0.5f)
+                    .icon(getMapIcon(R.drawable.player_marker, 34))
             )?.also {
                 it.tag = "player:${player.id}"
                 otherPlayerMarkers[player.id] = it
@@ -491,7 +535,8 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     val currentMarker = otherPlayerMarkers[playerId] ?: return
                     if (currentMarker.tag != "player-avatar:$avatarUrl") return
-                    val scaled = Bitmap.createScaledBitmap(resource, 75, 75, false)
+                    val markerSize = (34 * resources.displayMetrics.density).toInt()
+                    val scaled = Bitmap.createScaledBitmap(resource, markerSize, markerSize, true)
                     currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(scaled))
                 }
 
@@ -507,9 +552,16 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
     private fun vibrate() {
         vibe?.apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                this.vibrate(VibrationEffect.createOneShot(100, 1))
-            } else this.vibrate(100)
+                this.vibrate(
+                    VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE)
+                )
+            } else vibrateLegacy(this)
         }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun vibrateLegacy(vibrator: Vibrator) {
+        vibrator.vibrate(100)
     }
 
     private fun removeMapLines() {
@@ -590,7 +642,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
         } else if (holeNum <= 0) {
             holeNum = course.holes.size
         }
-        binding.holeNumberLabel.text = "#$holeNum"
+        binding.holeNumberLabel.text = getString(R.string.play_hole_number, holeNum)
 
         val nextHole = course.holes.firstOrNull { it.number == holeNum } ?: return
 
@@ -651,7 +703,8 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
             val markerOptions = MarkerOptions()
                 .position(meLocation)
                 .title("Me")
-                .icon(getMapIcon(R.drawable.player_marker))
+                .anchor(0.5f, 0.5f)
+                .icon(getMapIcon(R.drawable.player_marker, 40))
 //            myPlayerMarker!.icon = bitmojiImage.toNewSize(CGSize(width: 55, height: 55))
             meMarker = map.addMarker(markerOptions)
         } else {
@@ -678,6 +731,7 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
         binding.myDriveLabel.visibility = if (hasDrive && longDriveControlsExpanded) View.VISIBLE else View.GONE
         binding.markDriveButton.visibility = if (!hasDrive && longDriveControlsExpanded) View.VISIBLE else View.GONE
         binding.clearDriveButton.visibility = if (hasDrive && longDriveControlsExpanded) View.VISIBLE else View.GONE
+        binding.mapHeader.doOnLayout { updateMapContentPadding() }
     }
 
     private fun updateLongDriveMarkers() {
@@ -696,7 +750,8 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
                     .position(driveLocation.latLng)
                     .title(if (isMine) "My Drive" else "Long Drive")
                     .snippet(distanceToTee.distance)
-                    .icon(getMapIcon(R.drawable.golf_ball_blank, if (isMine) 45 else 35))
+                    .anchor(0.5f, 0.5f)
+                    .icon(getMapIcon(R.drawable.golf_ball_blank, if (isMine) 32 else 26))
             ) ?: return@forEach
             marker.tag = "Drive"
 
@@ -797,7 +852,8 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
                 .position(bunkerGeoPoint.latLng)
                 .title("Hazard")
                 .snippet(distanceToBunker.distance)
-                .icon(getMapIcon(R.drawable.hazard_marker))
+                .anchor(0.5f, 0.5f)
+                .icon(getMapIcon(R.drawable.hazard_marker, 30))
                 .draggable(GolfApplication.course?.let { GolfApplication.me.isAmbassadorOf(it) } == true)
             map.addMarker(markerOptions)?.let { marker ->
                 marker.setTag("$holeNumber:T$bunkerIndex")
@@ -816,7 +872,8 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
             val markerOptions = MarkerOptions()
                 .position(teePoint.latLng)
                 .title("Tee #${holeNumber}")
-                .icon(getMapIcon(R.drawable.tee_marker))
+                .anchor(0.5f, 0.65f)
+                .icon(getMapIcon(R.drawable.tee_marker, 42))
                 .draggable(GolfApplication.course?.let { GolfApplication.me.isAmbassadorOf(it) } == true)
             currentTeeMarker = map.addMarker(markerOptions)
             currentTeeMarker!!.tag = "$holeNumber:T"
@@ -838,15 +895,16 @@ class PlayGolfActivity : FragmentActivity(), OnMapReadyCallback,
             val markerOptions = MarkerOptions()
                 .position(pinPoint.latLng)
                 .title("Pin #${holeNumber}")
-                .snippet("$distanceToPin yds")
-                .icon(getMapIcon(R.drawable.flag_marker))
+                .snippet(distanceToPin.distance)
+                .anchor(0.35f, 0.9f)
+                .icon(getMapIcon(R.drawable.flag_marker, 44))
                 .draggable(GolfApplication.course?.let { GolfApplication.me.isAmbassadorOf(it) } == true)
             currentPinMarker = map.addMarker(markerOptions)
             currentPinMarker!!.tag = "$holeNumber:P"
         } else {
             pinMarker.position = pinPoint.latLng
             pinMarker.title = "Pin #$holeNumber"
-            pinMarker.snippet = "$distanceToPin yds"
+            pinMarker.snippet = distanceToPin.distance
             pinMarker.tag = "$holeNumber:P"
             pinMarker.isDraggable = GolfApplication.course?.let { GolfApplication.me.isAmbassadorOf(it) } == true
         }
