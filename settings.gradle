@@ -1,3 +1,14 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    plugins {
+        id 'com.android.legacy-kapt' version '9.3.1'
+    }
+}
+
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.10.0'
 }
